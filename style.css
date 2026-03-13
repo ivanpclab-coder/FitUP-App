@@ -1,0 +1,1229 @@
+:root {
+    /* Color inicial (Cian) */
+    --chasis-color: #00D1FF;
+    --cian: #00D1FF;
+    --cian-dark: #0088CC;
+    --text-dark: #102A2D;
+    --orange-neon: #FF5500;
+    --glass: rgba(255, 255, 255, 0.9);
+    --border: #AABFC1;
+    --neon-gradient: linear-gradient(135deg, #001f3f 0%, #0077FF 100%);
+
+    
+}
+
+#app-container {
+
+    width: 100%;
+    max-width: 430px;
+    height: 100vh; /* Altura fija de la pantalla del celular */
+    margin: 0 auto;
+    position: relative;
+    /* 1. DIMENSIONES Y SCROLL */
+    width: 100%;
+    max-width: 430px;
+    /* Usamos min-height para que el contenedor crezca si el contenido es largo */
+    min-height: 100vh; 
+    margin: 0 auto;
+    position: relative;
+    
+    /* ACTIVAR EL SCROLL VERTICAL */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* 2. EL MARCO NEÓN GRUESO (Dando el efecto de la foto) */
+    /* La línea sólida */
+    border: 8px solid var(--chasis-color);
+    border-radius: 40px;
+
+    /* 3. EL EFECTO DE DESVANECIMIENTO HACIA ADENTRO */
+    /* El valor de 60px es el que hace que el color se funda hacia el centro */
+    box-shadow: 
+        inset 0 0 60px var(--chasis-color), 
+        0 0 20px rgba(0,0,0,0.2);
+
+    /* 4. FONDO Y ACABADO */
+    background: radial-gradient(circle at top, #FFFFFF, #E0F4F7);
+    box-sizing: border-box;
+    transition: all 0.5s ease;
+    
+    /* Para que el scroll sea fluido */
+    display: block; 
+}
+
+/* IMPORTANTE: Ajuste para las pantallas */
+.screen {
+    width: 100%;
+    /* Dejamos que la pantalla dicte su propia altura para que haya scroll */
+    height: auto; 
+    min-height: 100vh;
+    /* Padding para que el neón grueso no tape tus botones */
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* Ocultar la barra de scroll para que se vea más limpio (opcional) */
+.main-content::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body { background-color: #E8F1F2; display: flex; justify-content: center; color: var(--text-dark); }
+
+
+
+.top-nav {
+    display: flex; justify-content: space-between; padding: 12px 20px;
+    position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--border);
+}
+
+.btn-top {
+    background: var(--cian-dark); color: white; border: none; padding: 8px 14px; 
+    border-radius: 12px; font-size: 0.7rem; font-weight: 900; cursor: pointer;
+}
+
+.screen { display: none; padding: 15px; padding-bottom: 120px; min-height: 95vh; animation: fadeIn 0.3s ease; }
+
+.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.glass-card {
+    background: var(--glass); border: 2px solid var(--border);
+    border-radius: 20px; padding: 15px; margin-bottom: 12px;
+}
+
+h2 { font-weight: 900; font-size: 1.4rem; color: var(--cian-dark); margin-bottom: 10px; }
+
+label { font-size: 0.7rem; font-weight: 800; color: var(--cian-dark); display: block; margin-top: 8px; }         
+
+input, select {
+    width: 100%; padding: 10px; border: 2px solid var(--border);
+    border-radius: 10px; background: white; font-weight: 600;
+}
+
+.type-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+
+.type-chip {
+    padding: 8px 12px; border-radius: 10px; background: white;
+    border: 2px solid var(--border); font-size: 0.7rem; font-weight: 800;
+    cursor: pointer; transition: 0.3s;
+}
+
+.type-chip.selected { background: var(--cian-dark); color: white; border-color: var(--cian-dark); }
+
+.btn-main {
+    background: #1575d5; 
+    color: #FFFFFF; 
+    border: none; 
+    padding: 16px;
+    border-radius: 15px; 
+    font-weight: 900; 
+    
+    /* CAMBIA ESTAS LÍNEAS */
+    width: 60%;           /* Antes estaba en 100%, ahora ocupa solo el 60% */
+    margin: 10px auto;    /* Esto lo centra horizontalmente */
+    display: block;       /* Asegura que el margen auto funcione */
+    
+    cursor: pointer; 
+    font-size: 1rem;
+    border-radius: 50px; 
+    box-shadow: 0 4px 15px #FFFFFF;
+}
+
+.btn-empezar {
+    display: none; background: #1a1a1a; color: var(--cian);
+    border: 2px solid var(--cian); border-radius: 20px;
+    padding: 20px; font-weight: 900; font-size: 1.3rem;
+    width: 100%; cursor: pointer; margin-top: 15px;
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.4);
+}
+
+.ex-card {
+    display: flex; align-items: center; background: white; 
+    border: 2px solid var(--border); border-radius: 15px; 
+    margin-bottom: 10px; overflow: hidden; cursor: pointer; transition: 0.2s;
+}
+
+.ex-card.selected { border-color: var(--cian); background: #E0F7FA; transform: scale(1.02); }
+
+.ex-img { width: 90px; height: 65px; background-size: cover; background-position: center; }
+
+.ex-info { padding: 10px; }
+
+.ex-title { font-weight: 900; font-size: 0.85rem; color: var(--cian-dark); }
+
+.ex-desc { font-size: 0.7rem; color: #555; font-weight: 700; }
+
+.info-badge {
+    background: rgba(0, 209, 255, 0.1); color: var(--cian-dark);
+    padding: 5px 12px; border-radius: 20px; font-size: 0.65rem;
+    font-weight: 800; border: 1px solid var(--cian); display: inline-block; margin: 2px;
+}
+
+/* --- WIDGET BOTELLA REALISTA --- */
+.real-bottle-wrap { position: relative; width: 110px; height: 210px; margin: 0 auto; }
+
+.bottle-cap { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 12px; background: linear-gradient(90deg, #333, #777, #333); border-radius: 4px 4px 0 0; z-index: 5; }
+
+.bottle-neck { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 30px; height: 20px; background: rgba(255,255,255,0.4); border: 2px solid rgba(0,209,255,0.2); z-index: 4; }
+
+.bottle-body { position: absolute; top: 30px; width: 100%; height: 180px; background: rgba(255, 255, 255, 0.3); border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 25px 25px 35px 35px; backdrop-filter: blur(8px); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset -5px 0 15px rgba(255,255,255,0.5); z-index: 3; }
+
+.water-wave { position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(180deg, #00D1FF 0%, #0077FF 100%); transition: height 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+
+.water-wave::before { content: ''; position: absolute; top: -15px; left: -50%; width: 200%; height: 30px; background: rgba(255, 255, 255, 0.4); border-radius: 40%; animation: waveMotion 4s infinite linear; }
+
+@keyframes waveMotion { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+#widget-perc-txt { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 1.5rem; color: #1a1a1a; text-shadow: 0 0 10px rgba(255,255,255,0.8); z-index: 10; pointer-events: none; }
+
+/* --- ESTILOS PANTALLA DATOS --- */
+.tip-card { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 10px; background: white; border-radius: 15px; border-left: 5px solid var(--cian); }
+
+.tip-icon { font-size: 1.5rem; }
+
+.video-card { background: #000; border-radius: 15px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: pointer; }
+
+.video-thumb { width: 100%; height: 120px; background-size: cover; background-position: center; opacity: 0.7; }
+
+.video-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; color: white; text-shadow: 0 0 15px rgba(0,0,0,0.5); }
+
+.video-info { padding: 10px; color: white; font-size: 0.8rem; font-weight: 800; background: rgba(0,0,0,0.6); }
+
+/* --- BARRA INFERIOR FUTURISTA IMPACTANTE --- */
+
+/* --- NAVEGACIÓN INFERIOR AJUSTADA AL ANCHO DE LA APP --- */
+
+#nav-bottom {
+    position: fixed;  /* Cambiamos a absolute para que se pegue al 'body' relativo */
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* Ajuste fino para centrado perfecto */
+    width: 100%;
+    max-width: 420px;    /* DEBE SER IGUAL al max-width del body */
+    height: 65px;
+    
+    background: rgba(15, 20, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 209, 255, 0.2);
+    
+    /* REDONDEADO INFERIOR PARA ENCAJAR EN EL MARCO */
+    border-radius: 0 0 20px 20px; 
+    
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding-bottom: 10px; /* Espacio extra para que los botones no queden tan pegados al borde curvo */
+}
+
+
+/* Contenedor principal de tu App (Asegúrate de que tenga esto en tu CSS) */
+/* Esto es lo que limita el ancho en el PC */
+.app-container, #main-wrapper, body {
+    max-width: 400px; /* O el ancho que estés usando para simular el móvil */
+    margin: 0 auto;
+    position: relative; /* Esto es vital para que el nav absolute se quede aquí dentro */
+    min-height: 100vh;
+}
+
+/* Estilo base del botón (Se mantiene igual pero más pulido) */
+.nav-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ebf1f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-btn span {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.nav-btn small {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+/* EFECTO HOVER Y ACTIVE */
+.nav-btn:hover, .nav-btn.active {
+    color: var(--cian);
+    transform: translateY(-5px); /* Sobresale hacia arriba */
+}
+
+.nav-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    width: 15px;
+    height: 3px;
+    background: var(--cian);
+    box-shadow: 0 0 10px var(--cian);
+    border-radius: 10px;
+}
+
+
+
+/* --- ESTILOS PANTALLA ACERCA DE --- */
+.logo-futuristic {
+    width: 110px; margin: 20px auto; display: block;
+    filter: drop-shadow(0 0 15px var(--cian));
+    animation: float 4s ease-in-out infinite, pulse-glow 2s infinite alternate;
+}
+
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(2deg); } }
+
+@keyframes pulse-glow { from { filter: drop-shadow(0 0 8px var(--cian)); } to { filter: drop-shadow(0 0 25px var(--cian)); } }   
+
+.about-widget {
+    background: white; border: 2px solid var(--border); border-radius: 22px;
+    padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    position: relative; overflow: hidden;
+}
+
+.about-widget::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--cian); }
+
+.about-title { font-weight: 900; font-size: 1rem; color: var(--cian-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+
+.about-text { font-size: 0.88rem; line-height: 1.5; color: #2C3E50; font-weight: 500; text-align: justify; }
+
+.version-box { background: rgba(16, 42, 45, 0.05); padding: 20px; border-radius: 20px; margin-top: 30px; border: 2px solid var(--border); text-align: center; }
+
+.version-text { font-size: 0.75rem; font-weight: 800; color: #777; margin-bottom: 4px; }
+
+.copyright-text { font-size: 0.7rem; font-weight: 700; color: #999; }
+
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+
+.cal-day { font-size: 0.6rem; text-align: center; padding: 5px; border-radius: 5px; background: white; border: 1px solid var(--border); }
+
+.bottle-chart { display: flex; align-items: flex-end; justify-content: space-around; height: 100px; margin-top: 15px; }
+
+.bottle-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+.bottle-frame { width: 25px; height: 70px; border: 2px solid var(--border); border-radius: 4px; position: relative; background: #FFF; overflow: hidden; }
+
+.bottle-fill { position: absolute; bottom: 0; width: 100%; background: var(--cian); transition: height 0.5s ease; }
+
+.bottle-label { font-size: 0.6rem; font-weight: 900; margin-top: 5px; }
+
+/* Animación del engranaje futurista */
+#futuristic-gear {
+    color: var(--cian); /* Color del engranaje */
+    animation: spin 8s linear infinite; /* Animación de giro */
+    filter: drop-shadow(0 0 5px rgba(0, 209, 255, 0.5)); /* Efecto de brillo */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Animaciones de Inicio */
+.logo-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo-futuristic-main {
+    width: 130px;
+    z-index: 10;
+    filter: drop-shadow(0 0 10px var(--cian));
+    animation: float 3s ease-in-out infinite;
+}
+
+.orbital-ring, .orbital-ring-2 {
+    position: absolute;
+    border: 2px solid var(--cian);
+    border-radius: 50%;
+    opacity: 0.4;
+}
+
+.orbital-ring {
+    width: 120px;
+    height: 120px;
+    border-top-color: transparent;
+    animation: spin 3s linear infinite;
+}
+
+.orbital-ring-2 {
+    width: 140px;
+    height: 140px;
+    border-bottom-color: transparent;
+    animation: spin 5s linear reverse infinite;
+}
+
+.welcome-text {
+    font-size: 2rem;
+    font-weight: 900;    
+    background: linear-gradient(90deg, #219ab5, #0077FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    letter-spacing: -1px;
+}
+
+.slogan-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #010009;
+    margin-bottom: 20px;
+}
+
+/* Widget de Carga */
+.loader-widget {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 10px;
+}
+
+.spinner-modern {
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(0, 209, 255, 0.1);
+    border-top: 4px solid var(--cian);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+
+/* Animación de salto y rebote para la gota alegre */
+.mini-drop-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* El transform inicial debe incluir el translate para centrarla */
+    transform: translate(-50%, -50%); 
+    width: 80px; 
+    z-index: 15;
+    animation: jumpAndSquash 1.2s ease-in-out infinite;
+}
+
+@keyframes jumpAndSquash {
+    0%, 100% {
+        /* Posición inicial: En el centro */
+        transform: translate(-50%, -50%) scale(1, 1);
+    }
+    30% {
+        /* Aplastamiento antes de saltar */
+        transform: translate(-50%, -40%) scale(1.2, 0.8);
+    }
+    50% {
+        /* Punto más alto del salto: Se estira */
+        transform: translate(-50%, -80%) scale(0.8, 1.2);
+    }
+    70% {
+        /* Caída y contacto inicial */
+        transform: translate(-50%, -45%) scale(1.1, 0.9);
+    }
+}
+
+/* Animación global de salto para cualquier gota */
+.anim-gota-salto {
+    display: inline-block; /* Permite que la animación de escala funcione bien */
+    animation: jumpAndSquashGlobal 1.2s ease-in-out infinite;
+}
+
+@keyframes jumpAndSquashGlobal {
+    0%, 100% {
+        transform: translateY(0) scale(1, 1);
+    }
+    30% {
+        transform: translateY(0) scale(1.2, 0.8);
+    }
+    50% {
+        transform: translateY(-20px) scale(0.8, 1.2); /* Salta 20px hacia arriba */
+    }
+    70% {
+        transform: translateY(0) scale(1.1, 0.9);
+    }
+}
+
+.loading-msg {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--cian-dark);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--cian), var(--cian-dark));
+    transition: width 3s linear;
+}
+.nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: var(--cian);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--cian), 0 0 20px var(--cian);
+}
+.profile-photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra horizontalmente el círculo y el texto */
+    justify-content: center;
+    width: 100%;         /* Asegura que use todo el ancho de la tarjeta */
+    margin: 20px 0;      /* Espacio arriba y abajo */
+    text-align: center;
+}
+
+/* Usamos el ID del contenedor padre si es necesario para dar más fuerza */
+.profile-photo-container .photo-wrapper {
+    width: 150px !important;  /* <--- Pon aquí el tamaño que desees (ej: 150px) */
+    height: 150px !important; /* <--- Pon aquí el mismo tamaño */
+    border-radius: 50% !important;
+    border: 3px solid var(--cian);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
+    background: #fff;
+    margin: 0 auto; /* Refuerza el centrado */
+}
+
+/* Asegura que la imagen interna también se ajuste al nuevo tamaño */
+.photo-wrapper {
+    /* MODIFICA ESTOS DOS VALORES */
+    width: 50px !important;  /* <--- Cambia este número (ej: 100px, 150px, 180px) */
+    height: 50px !important; /* <--- DEBE SER EL MISMO que el de arriba */
+    
+    /* El resto mantenlo igual para no perder el estilo */
+    border-radius: 50% !important;
+    border: 3px solid var(--cian);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
+    background: #fff;
+    margin: 0 auto; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Esto asegura que la foto siempre llene el círculo sin importar el tamaño que elijas arriba */
+.photo-wrapper img {
+    width:50% !important;
+    height: 50% !important;
+    object-fit: cover;
+}
+
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: rgba(0, 136, 204, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 0.8rem;
+}
+
+.resultados-unificados {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio uniforme entre líneas */
+    padding: 15px;
+}
+
+.dato-resultado {
+    font-size: 1rem !important; /* <--- ESTO IGUALA EL TAMAÑO DE TODOS */
+    font-weight: 800;           /* Grosor de letra igual */
+    color: #ffffff;             /* Color base blanco */
+    text-transform: uppercase;  /* Todo en mayúsculas para estilo gadget */
+    letter-spacing: 0.5px;      /* Espaciado moderno entre letras */
+}
+
+/* Si quieres que los valores resaltados (los números) tengan un color especial */
+.dato-resultado span {
+    color: var(--cian);         /* O el color que estés usando (ej: #00d1ff) */
+}
+
+.horizontal-scroll-wrapper {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ex-card-mini {
+    min-width: 90px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 15px;
+    padding: 15px 5px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.ex-card-mini.selected {
+    border-color: var(--cian);
+    background: #f0fbff;
+    transform: translateY(-5px);
+}
+
+.icon-svg { width: 20px; height: 20px; margin-bottom: 5px; color: var(--cian-dark); }
+
+/* Panel de Checkboxes */
+.panel-futurista {
+    border-left: 5px solid var(--cian);
+    background: rgba(255,255,255,0.9);
+}
+
+.panel-header {
+    font-size: 0.75rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: var(--cian-dark);
+}
+
+.check-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.check-container input { position: absolute; opacity: 0; }
+
+.checkmark {
+    position: absolute;
+    top: 0; left: 0;
+    height: 20px; width: 20px;
+    background-color: #eee;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+}
+
+.check-container input:checked ~ .checkmark {
+    background-color: var(--cian);
+    border-color: var(--cian);
+}
+
+/* Contenedor en cuadrícula 3x2 */
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+    grid-template-rows: repeat(2, auto);    /* 2 filas */
+    gap: 10px;
+    margin-bottom: 20px; /* Espacio libre abajo para tus futuros datos */
+}
+
+/* Tarjeta minimalista futurista */
+.ex-card-mini {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.ex-card-mini.selected {
+    border-color: var(--cian);
+    background: white;
+    box-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
+    transform: translateY(-3px);
+}
+
+/* Imagen circular o redondeada pequeña */
+.ex-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 5px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--cian);
+}
+
+
+
+
+/* Estilo para el texto en paréntesis */
+.ex-mini-tag {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--cian-dark);
+    opacity: 0.8;
+    margin-top: -2px; /* Lo acerca al título principal */
+}
+
+/* Ajuste ligero al título para mejor legibilidad */
+.ex-mini-title {
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+
+
+/*Recien
+/* Cuadrícula de rutinas 2 columnas x 3 filas */
+.rutinas-grid-2x3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columnas */
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.panel-header {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--cian-dark);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.descanso-txt {
+    text-align: center;
+    font-weight: 800;
+    color: var(--orange-neon);
+    background: rgba(255, 85, 0, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 0.85rem;
+}
+
+/* Ajuste de los contenedores de check para que el texto no se amontone */
+
+/* Ajuste de cada opción de rutina para que no se monten */
+.check-container {
+    display: flex !important;
+    align-items: center !important;
+    background: #f8f9fa;
+    padding: 10px 8px !important;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    min-height: 45px; /* Altura fija para que todas sean iguales */
+    margin-bottom: 0 !important; /* iOS suele añadir márgenes fantasma */
+}
+
+/* Opcional: Si el checkbox tiene un margen automático, quítalo */
+.check-container input[type="checkbox"] {
+    margin: 0; 
+}
+
+
+#panel-rutinas {
+    width: 95%;
+    margin: 20px auto;
+    padding: 10px;
+    box-sizing: border-box;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.rutina-check {
+    accent-color: var(--cian-dark); /* Color del check acorde a tu marca */
+    cursor: pointer;
+}
+
+#panel-rutinas label:hover {
+    background-color: #e6f7ff !important;
+    border-color: #00d1ff !important;
+    transition: 0.3s;
+}
+
+/* Ajuste específico para el contenedor del gráfico en el Dashboard */
+#circleChart {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 55, 0.2));
+}
+
+#txt-perc {
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -2px;
+}
+
+#dash-goal {
+    text-shadow: 0 0 5px rgba(255, 85, 0, 0.2);
+}
+
+#dash-water-fill::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 200%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 40%;
+    animation: waveMotion 5s infinite linear;
+    opacity: 0.5;
+}
+
+.rutina-item-dash:hover {
+    transform: translateX(5px);
+    border-color: var(--cian);
+}
+
+.rutina-item-dash.done span {
+    text-decoration: line-through;
+    color: #aabfc1;
+}
+
+/* Animación para el mensaje de éxito */
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+#msg-finalizado {
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bottle-widget-large {
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.bottle-main-frame {
+    width: 120px;
+    height: 220px;
+    border: 4px solid var(--cian);
+    border-radius: 20px 20px 10px 10px;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.2);
+}
+
+.bottle-main-fill {
+    width: 100%;
+    background: linear-gradient(180deg, #00D1FF, #0077FF);
+    position: absolute;
+    bottom: 0;
+    transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -5px 15px rgba(0, 209, 255, 0.5);
+}
+
+.bottle-main-perc {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    text-shadow: 0 0 5px white;
+    z-index: 2;
+}
+
+.bottle-container-futuristic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+    filter: drop-shadow(0 0 15px rgba(0, 209, 255, 0.3));
+}
+
+.bottle-cap {
+    width: 40px;
+    height: 12px;
+    background: var(--text-dark);
+    border-radius: 4px 4px 0 0;
+    border: 2px solid var(--cian);
+}
+
+.bottle-neck {
+    width: 30px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid var(--cian);
+    border-right: 3px solid var(--cian);
+}
+
+.bottle-body {
+    width: 100px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 3px solid var(--cian);
+    border-radius: 20px 20px 15px 15px;
+    position: relative;
+    overflow: hidden; /* Esto hace que el agua no se salga de la forma */
+    backdrop-filter: blur(5px);
+}
+
+.bottle-liquid {
+    width: 100%;
+    height: 0%; /* Dinámico con JS */
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(180deg, #00D1FF 0%, #0077FF 100%);
+    transition: height 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    box-shadow: 0 -5px 15px rgba(0, 209, 255, 0.8);
+}
+
+/* Efecto de burbujas o brillo en el agua */
+.bottle-liquid::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    filter: blur(2px);
+}
+
+.bottle-reflection {
+    position: absolute;
+    top: 0; left: 10px;
+    width: 15px; height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0.2), transparent);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.bottle-perc-text {
+    position: absolute;
+    width: 100%;
+    top: 45%;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+
+/* Para el ingreso de codigo-usuario */
+/* Pantalla de bloqueo inicial */
+#bloqueo-acceso {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0f19;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+#bloqueo-acceso input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--cian);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    width: 80%;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+/*Configuracion de boton cerrar sesión*/
+/* Contenedor para centrarlo */
+/* Reducimos el espacio del contenedor del botón */
+.logout-container {
+    margin-top: 1px !important; /* Controla aquí la separación (5px es casi nada) */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Clase específica para el botón de Cerrar Sesión */
+.btn-logout {
+    display: flex;         /* Activa el alineamiento flexible */
+    align-items: center;    /* Centra verticalmente el icono con el texto */
+    justify-content: center; /* Centra todo el contenido horizontalmente */
+
+    background-color: #ff3131;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 15px;
+    font-weight: bold;
+    width: 80%;            /* No ocupa todo el ancho, se ve más elegante centrado */
+    max-width: 300px;      /* Evita que se haga gigante en pantallas anchas */
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 49, 49, 0.3);
+}
+
+.btn-logout:active {
+    transform: scale(0.95);
+    background-color: #d12828; /* Un rojo un poco más oscuro al presionar */
+}
+
+/* El texto principal y secundario */
+.text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.main-text {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.sub-text {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    text-transform: uppercase;
+}
+
+.icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 60, 0.5));
+}
+
+/* EFECTO HOVER: Se ilumina en rojo neón */
+.btn-logout:hover {
+    background: rgba(255, 0, 60, 0.15);
+    border-color: #ff003c;
+    box-shadow: 0 0 20px rgba(255, 0, 60, 0.2);
+    transform: scale(1.02);
+}
+
+/* Efecto de brillo que pasa por encima */
+.btn-logout::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn-logout:hover::before {
+    left: 100%;
+}
+
+/* Contenedor para centrar y dar espacio */
+.logo-animado-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+}
+
+/* La imagen con su animación */
+/* Aseguramos que el logo no sea más grande que el texto */
+.logo-fitup-config {
+    width: 35px; /* Ajustado para que sea discreto */
+    height: auto;
+    filter: none !important;
+    animation: girarLogo 10s linear infinite;
+}
+
+/* Definición del movimiento de giro */
+@keyframes girarLogo {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Quitamos el margen que el navegador pone a los h2 por defecto */
+#screen-config h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* --- AJUSTE DE CATEGORÍAS: 2 COLUMNAS Y MÁS GRANDE --- */
+
+/* 1. Forzamos el contenedor a 2 columnas */
+.exercise-grid {
+    grid-template-columns: 1fr 1fr !important; /* Mantenemos 2 columnas */
+    gap: 10px !important;    /* Reducimos el espacio entre tarjetas */
+    padding: 4px !important; /* Menos espacio en los bordes */
+    margin-bottom: 10px !important;
+}
+
+/* 2. Hacemos la tarjeta más alta y espaciosa */
+.ex-card-mini {
+    padding: 12px 8px !important; /* Reducimos mucho el relleno arriba/abajo */
+    min-height: 145px !important; /* Reducimos la altura total de la tarjeta */
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px !important;
+}
+
+/* 3. Agrandamos el Icono (Engranaje/Botella/Gota) */
+.ex-icon {
+    width: 85px !important;  /* Bajamos a 85px para que no estire la tarjeta */
+    height: 85px !important;
+    margin: 0 auto 8px !important; /* Solo 8px de separación con el texto */
+    border-width: 2px !important;
+}
+/* 4. Agrandamos los Textos */
+/* Textos más juntos */
+.ex-mini-title {
+    font-size: 0.8rem !important;
+    margin-bottom: 2px !important;
+    line-height: 1.1 !important;
+}
+
+.ex-mini-tag {
+    font-size: 0.65rem !important;
+    margin-top: 0 !important;
+}
+
+
+/* Corrección Rutinas para IOS */
+/* --- PANEL DE RUTINAS REFORMADO PARA IOS --- */
+#panel-rutinas {
+    display: none; /* Se activa con JS */
+    margin: 15px auto !important;
+    width: 92% !important; /* Evita que choque con los bordes del chasis */
+    padding: 15px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    
+    /* Evita que los elementos internos se desborden */
+    overflow: hidden; 
+    box-sizing: border-box;
+}
+
+/* Contenedor interno de las opciones (Checkboxes) */
+.rutinas-grid-2x3 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* 2 columnas exactas */
+    gap: 10px !important;
+    width: 100% !important;
+}
+
+
+
+/* El texto dentro del check */
+.check-container span {
+    font-size: 0.75rem !important;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-dark);
+    margin-left: 8px; /* Separación del cuadrito del check */
+}
+
+/*redes sociales*/
+.social-container a img:active {
+    transform: scale(0.9);
+    opacity: 0.8;
+    transition: 0.1s;
+}
+/*opacidad para los tiops*/
+#txt-tip {
+    transition: opacity 0.5s ease;
+}
+
+/* --- ESTILO PARA EL BOTÓN INICIAR RUTINA --- */
+.btn-iniciar-rutina {
+    /* Alineación y Centrado */
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    justify-content: center;
+    text-align: center;
+
+    /* Colores y Forma */
+    background-color: #ffbe24; /* Color solicitado */
+    color: #1a1a1a;           /* Texto oscuro para contraste */
+    border: none;
+    padding: 20px 30px;
+    border-radius: 20px;
+    
+    /* Tamaño y Posición */
+    width: 85%;
+    max-width: 320px;
+    margin: 30px auto; /* Esto lo centra en la pantalla */
+    cursor: pointer;
+
+    /* Efecto Neón (Sutil) */
+    box-shadow: 0 6px 20px rgba(255, 190, 36, 0.4);
+    
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.btn-iniciar-rutina:active {
+    transform: scale(0.95);
+}
+
+/* Estilo para los textos dentro del botón */
+.main-text-btn {
+    font-size: 18px;
+    display: block;
+}
+
+.sub-text-btn {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
