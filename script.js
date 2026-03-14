@@ -20,9 +20,9 @@ function showScreen(id) {
 const temas = {
     'screen-dash': '#5e9918',        // Verde desvanecido
     'screen-access': '#12a5c2', // Azul desvanecido
-    'screen-hidratacion': '#00d1ff',
+    'screen-hidratacion': '#c98fdb',
     'screen-data': '#f39c12',        // Naranja desvanecido
-    'screen-config': '#e69e5b',        // Naranja desvanecido
+    'screen-config': '#f8bf89',        // Naranja desvanecido
     'screen-progreso': '#9b59b6'     // Morado desvanecido
     
 };
@@ -227,21 +227,48 @@ function startLoading() {
 
 function handleSaveData() {
     // 1. Obtener valores de los inputs
-    const n = document.getElementById('in-name').value;
+    const n = document.getElementById('in-name').value.trim();
+    const age = parseInt(document.getElementById('in-age').value); // Añadida la edad
     const w = parseFloat(document.getElementById('in-weight').value);
     const h = parseFloat(document.getElementById('in-height').value);
     const act = document.getElementById('in-act').value; // Bajo, Medio, Alto
         
-    // 2. Validación
-    if(!n || isNaN(w) || isNaN(h) ) { 
-        alert("Por favor, complete todos los campos correctamente. La altura debe ser en metros (ej: 1.75)"); 
-        return; 
+    // 2. VALIDACIÓN DE ALTA CONCENTRACIÓN (Modificado)
+    
+    // Validar Nombre: Solo letras
+    const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!regexNombre.test(n) || n === "") {
+        alert("⚠️ ERROR EN NOMBRE: Solo se permiten letras.\nAlternativa: Escribe un nombre real sin números ni símbolos.");
+        document.getElementById('in-name').focus();
+        return;
     }
 
-    // 3. Cálculo de IMC
+    // Validar Edad: 8 a 80
+    if (isNaN(age) || age < 6 || age > 80) {
+        alert("⚠️ ERROR EN EDAD: El rango permitido es de 6 a 80 años.\nAlternativa: Ingresa una edad válida para ajustar tus necesidades.");
+        document.getElementById('in-age').focus();
+        return;
+    }
+
+    // Validar Peso: 30 a 200kg
+    if (isNaN(w) || w < 30 || w > 200) {
+        alert("⚠️ ERROR EN PESO: El rango permitido es de 30kg a 200kg.\nAlternativa: Revisa el peso ingresado (debe ser un número).");
+        document.getElementById('in-weight').focus();
+        return;
+    }
+
+    // Validar Altura: 1.0 a 2.3m
+    if (isNaN(h) || h < 1.0 || h > 2.3) {
+        alert("⚠️ ERROR EN ALTURA: El rango permitido es de 1.0m a 2.30m.\nAlternativa: Usa el formato de punto para decimales (ej: 1.70).");
+        document.getElementById('in-height').focus();
+        return;
+    }
+
+    // 3. Cálculo de IMC (Continúa el proceso original)
     const imcValue = (w / (h * h)).toFixed(1);
     user.imc = imcValue;
     user.name = n;
+    user.age = age; // Guardamos la edad en el objeto user
     user.activity = act;
 
     // 4. Determinar Categoría de IMC
@@ -252,7 +279,7 @@ function handleSaveData() {
     else if (imcValue <= 29.9) { categoria = "Sobrepeso"; colorCat = "#f39c12"; }
     else { categoria = "Obesidad"; colorCat = "#e74c3c"; }
     
-    // 5. Lógica de Nivel de Entrenamiento (EL DATO LIMPIO)
+    // 5. Lógica de Nivel de Entrenamiento
     let nivelEntreno = ""; 
     if (act === "Bajo" && (categoria === "Bajo peso" || categoria === "Peso saludable" )) {
         nivelEntreno = "Básico";        
@@ -266,7 +293,6 @@ function handleSaveData() {
         nivelEntreno = "Adaptativo";
     }
 
-    // GUARDAMOS EL NIVEL LIMPIO EN EL OBJETO USER
     user.level = nivelEntreno; 
 
     // 6. Cálculo de meta de agua
@@ -275,28 +301,23 @@ function handleSaveData() {
     if(act === 'Alto') extraAgua = 800;
     user.goal = Math.round((w * 35) + extraAgua);
 
-    // 7. ACTUALIZAR LA INTERFAZ (Sin repetir etiquetas)
+    // 7. ACTUALIZAR LA INTERFAZ
     try {
-        // Mostramos el IMC
         document.getElementById('res-imc').innerText = "IMC: " + user.imc;
         
-        // Mostramos la Categoría
         const catElement = document.getElementById('res-cat');
         if(catElement) {
             catElement.innerText = "Categoría: " + categoria;
             catElement.style.color = colorCat;
         }
 
-        // MOSTRAR NIVEL (Aquí es donde corregimos la duplicación)
         const nivelElem = document.getElementById('res-nivel-entreno');
         if (nivelElem) {
             nivelElem.innerText = "Nivel de Ejercicio: " + user.level;
         }
 
-        // Hidratación
         document.getElementById('res-water').innerText = "HIDRATACIÓN DIARIA: " + user.goal + " ml";
         
-        // Mostrar botones de navegación
         document.getElementById('results-labels').style.display = 'block';
         document.getElementById('btn-empezar').style.display = 'block';
         
@@ -305,8 +326,6 @@ function handleSaveData() {
         console.error("Error al actualizar la UI:", error);
     }
 }
-
-
 
 function goToExerciseSelect() {
     document.getElementById('exercise-greet').innerText = "¡Hola, " + user.name + "!";
@@ -741,38 +760,64 @@ window.onload = function() {
 
 async function validarAcceso() {
     const codigoInput = document.getElementById('input-codigo').value.trim();
-    const urlScript = "https://script.google.com/macros/s/AKfycbxqz0sybOKMOInqgmKmfikmnQA26bXXRdqSqqcHUPREc1OAkuGNXP1ogAkmy72PzwK8/exec"; // <--- PEGA TU URL AQUÍ
+    const urlScript = "https://script.google.com/macros/s/AKfycbxqz0sybOKMOInqgmKmfikmnQA26bXXRdqSqqcHUPREc1OAkuGNXP1ogAkmy72PzwK8/exec";
 
     if (!codigoInput) {
         alert("Por favor, ingresa un código.");
         return;
     }
 
+    // 1. REVISAR VINCULACIÓN PREVIA EN ESTE CELULAR
+    const codigoVinculado = localStorage.getItem('fitup_codigo_vinculado');
+
+    if (codigoVinculado) {
+        // Si ya hay una botella vinculada, solo dejamos pasar si el código coincide
+        if (codigoInput === codigoVinculado) {
+            console.log("Acceso por vinculación local exitosa.");
+            ejecutarEfectoDesbloqueo("¡Bienvenido de nuevo! Acceso por vinculación.");
+            return;
+        } else {
+            alert("⚠️ Este celular ya está vinculado a otra botella.\nUsa el código original o contacta a soporte.");
+            return;
+        }
+    }
+
+    // 2. SI NO HAY VINCULACIÓN, CONSULTAR A GOOGLE SHEETS (Primera vez)
     try {
-        // Llamada a Google Sheets
         const response = await fetch(`${urlScript}?codigo=${encodeURIComponent(codigoInput)}`);
         const resultado = await response.json();
 
         if (resultado.valido) {
+            // Guardamos que está autenticado y VINCULAMOS el código permanentemente
             localStorage.setItem('fitup_autenticado', 'true');
+            localStorage.setItem('fitup_codigo_vinculado', codigoInput);
             
-            // Efecto visual de desbloqueo
-            const lockScreen = document.getElementById('screen-lock');
-            lockScreen.style.transition = "all 0.5s ease";
-            lockScreen.style.opacity = "0";
-            setTimeout(() => {
-                lockScreen.style.display = 'none';
-                alert("¡Acceso concedido! Bienvenido.");
-            }, 500);
+            ejecutarEfectoDesbloqueo("¡Acceso concedido! Tu FitUP ha quedado vinculada a este celular.");
+            
         } else {
-            alert(resultado.msg === "Ya usado" ? "Este código ya fue utilizado." : "Código incorrecto. Contacta a tu vendedor.");
+            // Manejo de errores del servidor
+            if (resultado.msg === "Ya usado") {
+                alert("❌ Este código ya fue activado en otro dispositivo.\nSi cambiaste de celular, solicita un reset de tu clave.");
+            } else {
+                alert("❌ Código incorrecto. Verifica los datos proporcionados por el vendedor.");
+            }
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Hubo un problema de conexión. Verifica que tu URL sea correcta.");
+        alert("Hubo un problema de conexión. Verifica tu internet.");
     }
 }
 
+// Función auxiliar para no repetir código del efecto visual
+function ejecutarEfectoDesbloqueo(mensaje) {
+    const lockScreen = document.getElementById('screen-lock');
+    lockScreen.style.transition = "all 0.5s ease";
+    lockScreen.style.opacity = "0";
+    setTimeout(() => {
+        lockScreen.style.display = 'none';
+        alert(mensaje);
+    }, 500);
+}
 // Resetear clave
 
 function resetearAcceso() {
@@ -791,6 +836,23 @@ function resetearAcceso() {
             location.reload();
         }, 300);
     }
+}
+
+function cerrarSesion() {
+    // 1. Quitamos el estado de "autenticado" para que pida la clave al volver
+    localStorage.removeItem('fitup_autenticado');
+    
+    // 2. OPCIONAL: Si guardas info del IMC o metas, puedes borrarlas o dejarlas
+    // localStorage.removeItem('user_data'); 
+
+    // IMPORTANTE: NO tocamos 'fitup_codigo_vinculado'
+    // Esto permite que el usuario use SU misma clave siempre en este equipo.
+
+    alert("Sesión cerrada. La vinculación con tu FitUP se mantiene activa.");
+    
+    // 3. Redirigir a la pantalla de bloqueo/acceso
+    // Asegúrate de que esta función o lógica muestre el screen-lock
+    location.reload(); // Una forma rápida y limpia de volver al estado inicial de la App
 }
 
 //llamar tips diferentes
@@ -815,4 +877,59 @@ function mostrarTipAleatorio() {
         const indice = Math.floor(Math.random() * tipsFitUP.length);
         txtTip.innerText = tipsFitUP[indice];
     }
+}
+
+
+function ejecutarAccionBeber() {
+    const btn = document.getElementById('btn-beber-dash');
+    
+    // 1. Bloquear botón y sumar agua inmediatamente
+    btn.disabled = true;
+    btn.style.opacity = "0.5";
+    btn.innerText = "PROCESANDO...";
+
+    // Actualiza el nivel del widget
+    if (typeof addWater === "function") {
+        addWater(250);
+    }
+
+    // 2. Esperar 4 segundos para activar la alarma y el mensaje
+    setTimeout(() => {
+        // Restaurar botón
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerText = "BEBER AGUA 250ml";
+
+        // 3. Lanzar el TRIPLE PITIDO
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function emitirPitido(delay) {
+            setTimeout(() => {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1); // Duración corta por pitido
+            }, delay);
+        }
+
+        // Ejecutar los 3 pitidos con intervalos de 200ms
+        emitirPitido(0);
+        emitirPitido(200);
+        emitirPitido(400);
+
+        // 4. Vibración (opcional, para reforzar la alerta)
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100]);
+
+        // 5. Mostrar el mensaje de emergencia
+        // Se pone un pequeño delay extra para que el navegador no bloquee el sonido con el alert
+        setTimeout(() => {
+            alert("🚨 ALERTA DE HIDRATACIÓN 🚨\n¡Tiempo cumplido! No olvides beber tus 250ml de agua para mantener tu ritmo.");
+        }, 500);
+
+    }, 4000); // Los 4 segundos de espera
 }

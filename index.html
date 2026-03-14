@@ -13,15 +13,20 @@
 <body>
 
 <div id="screen-lock" style="position: fixed; top:0; left:0; width:100%; height:100%; background:#0a0f19; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+    <img src="gotaclave.png" alt="Seguridad" style="width: 160px; height: auto; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));">
     <h2 style="color:var(--cian); letter-spacing:3px;">ACCESO RESTRINGIDO</h2>
-    <p style="color:#777; font-size:0.8rem; margin-bottom:20px;">INGRESA TU CÓDIGO DE ACTIVACIÓN</p>
+    <p style="color:#777; font-size:1rem; margin-bottom:10px; font-weight: bold;">
+    INGRESA TU CÓDIGO DE ACTIVACIÓN
+</p>
     
     <input type="text" id="input-codigo" placeholder="CÓDIGO-XXXX" style="background:rgba(255,255,255,0.05); border:1px solid var(--cian); color:white; padding:15px; border-radius:12px; width:80%; text-align:center; font-size:1.2rem; outline:none; box-shadow:0 0 15px rgba(0,209,255,0.2);">
    
-    <button onclick="validarAcceso()" class="btn-main">ACTIVAR APLICACIÓN</button>
+    <button onclick="validarAcceso()" class="btn-main">ACTIVAR APLICACIÓN FITUP</button>
    
     <p id="error-msg" style="color:var(--orange-neon); font-size:0.7rem; margin-top:15px; display:none;">CÓDIGO NO VÁLIDO. CONTACTA A TU VENDEDOR.</p>
 </div>
+
+
 
 
 
@@ -49,10 +54,10 @@
     <h1 class="welcome-text">¡Bienvenido!</h1>
     <p class="slogan-text">Hidratación inteligente. Vida inteligente</p>
     
-    <div class="glass-card" style="width: 80%; margin-top: 20px;">
+    <div class="glass-card" style="width: 80%; margin-top: 20px; min-height: 60px; position: relative;">
         <button id="btn-sync" class="btn-main" onclick="startLoading()">Sincronizar tu FitUP</button>
         
-        <div id="loading-area" style="display:none; margin-top: 25px;">
+        <div id="loading-area" style="display:none; margin-top: 15px;">
             <div class="loader-widget">
                 <div class="spinner-modern"></div>
                 <img src="gotalegre.png" class="mini-drop-loader">
@@ -61,16 +66,17 @@
             <div class="progress-container">
                 <div id="bar" class="progress-bar"></div>
             </div>
-            <div style="display: flex; justify-content: center; margin-top: 30px;">
-        <img src="botella2.png" alt="Botella" style="max-width: 150px; height: auto;">
+            <div style="display: flex; justify-content: center; margin-top: 15px;">
+        <img src="botella2.png" alt="Botella" style="max-width: 100px; height: auto;">
     </div>
         </div>
     </div>
+    
     </div>
 
     <div id="screen-config" class="screen" style="padding: 3px;">
     
-        <h2 style="display: flex; align-items: center; gap: 10px;" >
+        <h2 style="display: flex; align-items: center; gap: 12px;" >
         Configuración 
         <div class="settings-header">
             <div class="logo-animado-container">
@@ -102,38 +108,67 @@
        
        
         <div class="glass-card">
-            <label>NOMBRE</label><input type="text" id="in-name" placeholder="Tu nombre">
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1"><label>EDAD</label><input type="number" id="in-age"></div>
-                <div style="flex:1"><label>PESO (kg)</label><input type="number" id="in-weight"></div>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1"><label>ALTURA (m)</label><input type="number" id="in-height" step="0.01" placeholder="Ej: 1.75"></div>
-                <div style="flex:1"><label>GÉNERO</label><select id="in-gen"><option>M</option><option>F</option></select></div>
-            </div>
-
-            <label style="text-align: center; display: block; width: 100%;"> ACTIVIDAD FÍSICA SEMANAL</label>
-            
-            <p style="font-size: 0.65rem; color: #666; font-weight: 700; margin-bottom: 8px;">Nivel de actividad:</p>
-            <select id="in-act">
-                <option value="Bajo">Baja (0-1 veces)</option>
-                <option value="Medio">Media (2-3 veces)</option>
-                <option value="Alto">Alta (4 o más veces)</option>
-            </select>
-            <div id="results-labels" style="display: none; margin-top: 15px; border-top: 2px solid var(--cian); padding-top: 10px;">
-    <div id="res-imc" style="font-weight: 900; color: var(--cian-dark);">IMC: --</div>
-    <div id="res-cat" style="font-weight: 900; font-size: 0.9rem; margin-bottom: 15px;">Categoría: --</div>
+    <label>NOMBRE</label>
+    <input type="text" id="in-name" placeholder="Ingresa solo letras">
     
-    <div style="font-weight: 900; margin-top: 15px; font-size: 1.1rem; color: #030342;">
-         <span id="res-nivel-entreno">Básico</span>
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1">
+            <label>EDAD: 6-80 años </label>
+            <input type="number" id="in-age" min="6" max="80" placeholder="6-80">
+        </div>
+        <div style="flex:1">
+            <label>PESO (kg): 30-200kg</label>
+            <input type="number" id="in-weight" min="30" max="200" placeholder="30-200">
+        </div>
+    </div>
+    
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1">
+            <label>ALTURA (m): 1m - 2.3m</label>
+            <input type="number" id="in-height" step="0.01" min="1.00" max="2.30" placeholder="Ej: 1.75">
+        </div>
+        <div style="flex:1">
+            <label>GÉNERO</label>
+            <select id="in-gen">
+                <option value="M">M</option>
+                <option value="F">F</option>
+            </select>
+        </div>
     </div>
 
-    <div id="res-water" style="font-weight: 900; color: var(--orange-neon);">HIDRATACIÓN DIARIA: -- ml</div>
-</div>
+    <label style="text-align: center; display: block; width: 100%; margin-top: 15px; font-weight: 900; color:  var(--cian-dark);"> 
+        ACTIVIDAD FÍSICA SEMANAL 
+    </label>
+    
+    <p style="font-size: 0.65rem; color: #666; font-weight: 700; margin-bottom: 8px;">Nivel de actividad:</p>
+    <select id="in-act">
+        <option value="Bajo">Baja (0-1 veces)</option>
+        <option value="Medio">Media (2-3 veces)</option>
+        <option value="Alto">Alta (4 o más veces)</option>
+    </select>
+
+    <div id="results-labels" style="display: none; margin-top: 15px; border-top: 2px solid var(--cian); padding-top: 10px;">
+        <div id="res-imc" style="font-weight: 900; color: var(--cian-dark);">IMC: --</div>
+        <div id="res-cat" style="font-weight: 900; font-size: 0.9rem; margin-bottom: 15px;">Categoría: --</div>
+        
+        <div style="font-weight: 900; margin-top: 15px; font-size: 1.1rem; color: #030342;">
+             Nivel: <span id="res-nivel-entreno">Básico</span>
         </div>
-        <button id="btn-save-data" class="btn-main" onclick="handleSaveData()">GUARDAR DATOS</button>
-        <button id="btn-empezar" class="btn-empezar" onclick="goToExerciseSelect()">EMPEZAR 🚀</button>
+
+        <div id="res-water" style="font-weight: 900; color: var(--orange-neon);">HIDRATACIÓN DIARIA: -- ml</div>
     </div>
+
+    <button id="btn-save-data" class="btn-main" onclick="handleSaveData()" style="margin-top: 20px; width: 100%; background-color: #1575d5;">
+        GUARDAR DATOS
+    </button>
+</div>
+
+<div style="padding: 0 20px;">
+    <button id="btn-empezar" class="btn-empezar" onclick="goToExerciseSelect()" style="display: none; width: 100%; margin-top: 10px;">
+        EMPEZAR 🚀
+    </button>
+</div>
+</div>
        
     <div id="screen-exercise-select" class="screen">
         <div style="text-align: center; margin-bottom: 20px;">
@@ -223,10 +258,13 @@
     
 </div>
 
-        </div>
         
-        <button class="btn-main" style="background: var(--cian-dark);" onclick="addWater()">💧 BEBER AGUA (250ml)</button>
-        <div class="glass-card" style="margin-top: 20px; border-left: 5px solid var(--cian); background: white;">
+        
+        <button id="btn-beber-dash" class="btn-main" onclick="ejecutarAccionBeber()" style="background: #1575d5; width: 80%; margin: 20px auto; display: block;">
+    BEBER AGUA 250ml
+</button>
+        
+
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
         <div style="text-align: left;">
             <p style="font-size: 0.65rem; font-weight: 800; color: #777; margin: 0;">ACTIVIDAD FÍSICA: <span id="dash-act-val" style="color: var(--cian-dark);">--</span></p>
@@ -245,16 +283,37 @@
     <div id="msg-finalizado" style="display: none; margin-top: 15px; padding: 10px; background: #d4edda; color: #155724; border-radius: 10px; text-align: center; font-weight: 800; font-size: 0.75rem; border: 1px solid #c3e6cb;">
         🎉 ¡Rutina completada!
     </div>
-</div>
+</div>        
+    </div>    
+
+    <div id="screen-hidratacion" class="screen">  
+
+    <h2 style="
+    font-size: 1.8rem; 
+    text-align: center; 
+    letter-spacing: 2px; 
+    margin-bottom: 25px; 
+    color: #1575d5; 
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 
+        1px 1px 0px #0d4a85, 
+        2px 2px 0px #0d4a85, 
+        3px 3px 0px #0a3661, 
+        4px 4px 5px rgba(0,0,0,0.5);
+">
+    CONTROL DE HIDRATACIÓN
+</h2>
+
+    <div style="width: 100%; display: flex; justify-content: center; align-items: center; margin: 20px 0;">    
+    <div style="width: 80px; text-align: center; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 15px; border: 1px solid rgba(0, 209, 255, 0.1);">
         
-    </div> 
-    
-
-    <div id="screen-hidratacion" class="screen">
-
-   <h2 style="font-size: 1.1rem; text-align: center; letter-spacing: 1px; margin-bottom: 20px;">
-        CONTROL DE HIDRATACIÓN
-    </h2>
+        <img src="botellas.png" alt="Botella 2" 
+             style="width: 100%; height: auto; display: block; margin: 0 auto; 
+                    filter: brightness(0.9) sepia(1) hue-rotate(190deg) saturate(3.5) drop-shadow(0 0 8px rgba(0, 117, 213, 0.6));">
+                    
+    </div>
+</div>
     
     <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
         
@@ -274,6 +333,7 @@
     </div>
 
     
+
 </div>
         <div style="text-align: right;">
             <div class="info-badge">Actividad: <span id="hid-act"></span></div>
@@ -310,7 +370,24 @@
 
 
     <div id="screen-progreso" class="screen">
-    <h2 style="text-align: center; letter-spacing: 2px;">MI PROGRESO</h2>        
+    
+    <h2 style="
+    font-size: 1.8rem; 
+    text-align: center; 
+    letter-spacing: 2px; 
+    margin-bottom: 25px; 
+    color: #1575d5; 
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 
+        1px 1px 0px #0d4a85, 
+        2px 2px 0px #0d4a85, 
+        3px 3px 0px #0a3661, 
+        4px 4px 5px rgba(0,0,0,0.5);
+">
+    MI PROGRESO
+</h2>
+    
     
     <div class="glass-card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
         <div class="info-badge">IMC: <span id="prog-imc"></span></div>
@@ -345,8 +422,34 @@
         
 
     <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: var(--orange-neon); font-size: 1.8rem;">HIDRA-TIPS</h2>
-            <p style="font-style: italic; font-weight: 700; color: #555;">"El agua es la fuerza motriz de toda la naturaleza."</p>
+            
+        <h2 style="
+    text-align: center; 
+    font-family: 'Arial Black', sans-serif; 
+    font-size: 2.2rem; 
+    letter-spacing: -1px; 
+    margin-bottom: 25px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
+">
+    <span style="
+        background: linear-gradient(to bottom, #02161f 0%, #1575d5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-right: 2px;
+    ">HIDRA</span>
+
+    <span style="color: #444; margin: 0 2px;">-</span>
+
+    <span style="
+        background: linear-gradient(to bottom, #f19407 0%, #ff6d00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    ">TIPS</span>
+</h2>
+       <p style="font-style: italic; font-weight: 700; color: #555;">"El agua es la fuerza motriz de toda la naturaleza."</p>
         </div>
     <div id="tip-container" style="background: #e0f7fa; padding: 15px; border-radius: 15px; margin-top: 20px; border-left: 5px solid #72D5C6;">
         <h4 style="color: #00796b; margin-bottom: 5px;">💡 Tip del Día</h4>
@@ -407,29 +510,52 @@
         <img src="youtube.png" alt="YouTube" style="width: 32px; height: auto; filter: none !important;">
     </a>
 
-    <a href="https://www.instagram.com/TU_USUARIO" target="_blank">
+    <a href="https://www.instagram.com/fitup.ja?igsh=MWdvZzBqM2RicTVvaA%3D%3D" target="_blank">
         <img src="instagram.png" alt="Instagram" style="width: 32px; height: auto; filter: none !important;">
     </a>
 
-    <a href="https://www.facebook.com/TU_PAGINA" target="_blank">
+    <a href="https://www.facebook.com/share/1BJM9c7M82/" target="_blank">
         <img src="facebook.png" alt="Facebook" style="width: 32px; height: auto; filter: none !important;">
     </a>
 
-    <a href="https://www.tiktok.com/@TU_USUARIO" target="_blank">
+    <a href="https://www.tiktok.com/@fitup.ja" target="_blank">
         <img src="tiktok.png" alt="TikTok" style="width: 32px; height: auto; filter: none !important;">
     </a>
 
 </div>
 
-<p class="version-text" style="text-align: center; font-size: 0.8rem; color: #888;">Versión de Software 1.0.1 (Build 582)</p>
-<p class="copyright-text" style="text-align: center; font-size: 0.8rem; color: #888; font-weight: bold;">© 2026 FitUP - Jahibé-Labs.</p>
+<div class="glass-card" style="margin-top: 20px; padding: 15px;">
+    <h3 style="color: var(--cian); font-size: 1rem; margin-bottom: 15px; text-align: center; font-weight: 900;">
+        RECURSOS Y DOCUMENTACIÓN
+    </h3>
 
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+        
+        <a href="FitUp es principalmente un.pdf" download="Guia_FitUP_Jahibe.pdf" 
+           style="text-decoration: none; display: flex; align-items: center; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; border: 1px dashed var(--cian); transition: 0.3s;">
+            
+            <div style="background: #ff4444; color: white; padding: 8px; border-radius: 5px; margin-right: 12px; font-weight: bold; font-size: 0.7rem;">
+                PDF
+            </div>
+            
+            <div style="flex: 1;">
+                <p style="margin: 0; color: #FFF; font-size: 0.85rem; font-weight: 700;">Guía de Usuario FitUP</p>
+                <p style="margin: 0; color: #777; font-size: 0.65rem;">Instrucciones de sincronización</p>
+            </div>
+
+            <span style="font-size: 1.2rem;">📥</span>
+        </a>
+
+        </div>
+</div>
 
         <div class="version-box">
             <p class="version-text">Versión de Software 1.0.1 (Build 582)</p>
             <p class="copyright-text">© 2026 FitUP - Jahibé-Labs.</p>
         </div>
     </div>
+
+
 
     <div id="nav-bottom" class="bottom-nav" style="display: none;">
         <div id="btn-nav-dash" class="nav-btn active" onclick="showScreen('screen-dash')">
