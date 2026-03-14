@@ -579,49 +579,37 @@
 </body>
 
 <style>
-    /* 1. Contenedor principal: una sola columna limpia */
+/* Este bloque solo se activa en celulares (iPhone/Android) */
+@media only screen and (max-width: 768px) {
     #panel-rutinas {
-        display: flex !important;
-        flex-direction: column !important;
+        display: block !important; /* Desactiva el Grid de Safari */
         width: 100% !important;
-        gap: 10px !important;
-        padding: 5px !important;
-        box-sizing: border-box !important;
+        padding: 0 !important;
     }
 
-    /* 2. La Tarjeta: Forzamos que sea ancha y contenga el texto */
     .check-container {
         display: flex !important;
-        flex-direction: row !important; /* Check a la izquierda, texto a la derecha */
+        flex-direction: row !important;
         align-items: center !important;
-        width: 100% !important;
-        min-height: 70px !important; /* Más altura para que quepa el texto */
+        width: 100% !important; /* Fuerza el ancho total */
+        min-height: 65px !important;
+        margin: 10px 0 !important; /* Espacio vertical entre filas */
         background: #f8f9fa !important;
-        border-radius: 12px !important;
         border: 1px solid #cce5ff !important;
-        padding: 10px !important;
+        border-radius: 12px !important;
         box-sizing: border-box !important;
-        margin-bottom: 5px !important;
+        float: none !important; /* Evita que se pongan a los lados */
     }
 
-    /* 3. El Texto: Forzamos que se quede ADENTRO del cuadro */
     .check-container span {
         flex: 1 !important;
-        color: #0056b3 !important;
+        white-space: normal !important; /* Evita que el texto se salga a la derecha */
+        word-break: break-word !important;
         font-size: 14px !important;
-        font-weight: bold !important;
-        margin-left: 10px !important;
-        white-space: normal !important; /* Permite que el texto baje si es largo */
-        text-align: left !important;
+        padding-right: 10px !important;
         display: block !important;
     }
-
-    /* 4. El Checkbox: Que no se deforme */
-    .check-container input[type="checkbox"] {
-        width: 25px !important;
-        height: 25px !important;
-        flex-shrink: 0 !important;
-    }
+}
 </style>
 
 </html>
