@@ -578,38 +578,38 @@
 <script src="script.js"></script>
 </body>
 
-<style>
-/* Este bloque solo se activa en celulares (iPhone/Android) */
-@media only screen and (max-width: 768px) {
-    #panel-rutinas {
-        display: block !important; /* Desactiva el Grid de Safari */
-        width: 100% !important;
-        padding: 0 !important;
+<script>
+    function arreglarDiseñoIOS() {
+        const panel = document.getElementById('panel-rutinas');
+        if (panel) {
+            // 1. Forzamos el contenedor a ser una sola columna
+            panel.style.setProperty('display', 'block', 'important');
+            panel.style.setProperty('column-count', '1', 'important');
+            
+            // 2. Buscamos todas las tarjetas de rutina
+            const tarjetas = panel.querySelectorAll('.check-container');
+            tarjetas.forEach(tarjeta => {
+                // Forzamos cada tarjeta a ocupar el 100% y ser un bloque independiente
+                tarjeta.style.setProperty('display', 'flex', 'important');
+                tarjeta.style.setProperty('width', '100%', 'important');
+                tarjeta.style.setProperty('max-width', '100%', 'important');
+                tarjeta.style.setProperty('margin-bottom', '15px', 'important');
+                tarjeta.style.setProperty('float', 'none', 'important');
+                
+                // Forzamos al texto a quedarse adentro
+                const texto = tarjeta.querySelector('span');
+                if (texto) {
+                    texto.style.setProperty('white-space', 'normal', 'important');
+                    texto.style.setProperty('flex', '1', 'important');
+                    texto.style.setProperty('display', 'block', 'important');
+                }
+            });
+        }
     }
 
-    .check-container {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        width: 100% !important; /* Fuerza el ancho total */
-        min-height: 65px !important;
-        margin: 10px 0 !important; /* Espacio vertical entre filas */
-        background: #f8f9fa !important;
-        border: 1px solid #cce5ff !important;
-        border-radius: 12px !important;
-        box-sizing: border-box !important;
-        float: none !important; /* Evita que se pongan a los lados */
-    }
-
-    .check-container span {
-        flex: 1 !important;
-        white-space: normal !important; /* Evita que el texto se salga a la derecha */
-        word-break: break-word !important;
-        font-size: 14px !important;
-        padding-right: 10px !important;
-        display: block !important;
-    }
-}
-</style>
+    // Ejecutamos la función al cargar y cada vez que cambie algo
+    window.onload = arreglarDiseñoIOS;
+    setInterval(arreglarDiseñoIOS, 1000); 
+</script>
 
 </html>
