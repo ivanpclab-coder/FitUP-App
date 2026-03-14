@@ -579,33 +579,48 @@
 </body>
 
 <style>
-    /* Contenedor principal */
+    /* 1. Contenedor principal: una sola columna limpia */
     #panel-rutinas {
         display: flex !important;
-        flex-direction: column !important; /* Fuerza una sola columna */
+        flex-direction: column !important;
         width: 100% !important;
-        gap: 8px !important; /* Controla el espacio exacto entre las filas */
+        gap: 10px !important;
+        padding: 5px !important;
+        box-sizing: border-box !important;
     }
 
+    /* 2. La Tarjeta: Forzamos que sea ancha y contenga el texto */
     .check-container {
         display: flex !important;
+        flex-direction: row !important; /* Check a la izquierda, texto a la derecha */
         align-items: center !important;
         width: 100% !important;
-        /* Reducimos el margen para que no estén tan separadas */
-        margin-bottom: 5px !important; 
-        padding: 8px 10px !important;
+        min-height: 70px !important; /* Más altura para que quepa el texto */
+        background: #f8f9fa !important;
+        border-radius: 12px !important;
+        border: 1px solid #cce5ff !important;
+        padding: 10px !important;
         box-sizing: border-box !important;
-        min-height: 50px !important; /* Suficiente para que no se monten las letras en iOS */
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #ddd;
+        margin-bottom: 5px !important;
     }
 
-    /* Asegura que el texto no se amontone internamente */
+    /* 3. El Texto: Forzamos que se quede ADENTRO del cuadro */
     .check-container span {
+        flex: 1 !important;
+        color: #0056b3 !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
         margin-left: 10px !important;
-        line-height: 1.2 !important;
-        font-size: 15px !important;
+        white-space: normal !important; /* Permite que el texto baje si es largo */
+        text-align: left !important;
+        display: block !important;
+    }
+
+    /* 4. El Checkbox: Que no se deforme */
+    .check-container input[type="checkbox"] {
+        width: 25px !important;
+        height: 25px !important;
+        flex-shrink: 0 !important;
     }
 </style>
 
