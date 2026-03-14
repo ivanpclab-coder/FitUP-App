@@ -735,58 +735,42 @@ input, select {
 
 /* Ajuste de los contenedores de check para que el texto no se amontone */
 
-/* Contenedor principal de las rutinas */
-#panel-rutinas {
-    width: 95%;
-    margin: 15px auto;
-    padding: 10px;
-    box-sizing: border-box;
-    animation: fadeIn 0.4s ease-out;
-    
-    /* CAMBIO CLAVE: Una sola columna para todo el panel */
-    display: grid;
-    grid-template-columns: 1fr; 
-    gap: 10px; /* Espaciado entre rutinas una abajo de la otra */
-}
-
-/* Ajuste de cada opción de rutina (La tarjeta) */
+/* Ajuste de cada opción de rutina para que no se monten */
 .check-container {
     display: flex !important;
     align-items: center !important;
     background: #f8f9fa;
-    padding: 12px 15px !important; /* Un poco más de aire para iOS */
+    padding: 10px 8px !important;
     border-radius: 12px;
     border: 1px solid var(--border);
-    min-height: 50px; 
-    margin-bottom: 0 !important;
-    width: 100%; /* Asegura que ocupe todo el ancho */
+    min-height: 45px; /* Altura fija para que todas sean iguales */
+    margin-bottom: 0 !important; /* iOS suele añadir márgenes fantasma */
+}
+
+/* Opcional: Si el checkbox tiene un margen automático, quítalo */
+.check-container input[type="checkbox"] {
+    margin: 0; 
+}
+
+
+#panel-rutinas {
+    width: 95%;
+    margin: 20px auto;
+    padding: 10px;
     box-sizing: border-box;
-    cursor: pointer;
-    transition: background 0.2s ease;
+    animation: fadeIn 0.4s ease-out;
 }
 
-/* Evita que el checkbox se vea pequeño en pantallas Retina de iPhone */
-.rutina-check {
-    accent-color: var(--cian-dark);
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    margin-right: 12px; /* Separación del texto */
-    flex-shrink: 0; /* Evita que el check se aplaste si el texto es largo */
-}
-
-/* Animación de entrada */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estilo para el texto dentro de la rutina */
-.check-container span {
-    font-size: 0.95rem;
-    color: #333;
-    font-weight: 500;
+.rutina-check {
+    accent-color: var(--cian-dark); /* Color del check acorde a tu marca */
+    cursor: pointer;
 }
+
 #panel-rutinas label:hover {
     background-color: #e6f7ff !important;
     border-color: #00d1ff !important;
@@ -1243,12 +1227,3 @@ input, select {
     opacity: 0.8;
 }
 
-/* Agrégalo al final de tu <style> o archivo .css */
-#panel-rutinas {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-    max-width: 600px; /* Para que en pantallas grandes no se estire demasiado */
-    margin: 0 auto;
-}

@@ -838,23 +838,6 @@ function resetearAcceso() {
     }
 }
 
-function cerrarSesion() {
-    // 1. Quitamos el estado de "autenticado" para que pida la clave al volver
-    localStorage.removeItem('fitup_autenticado');
-    
-    // 2. OPCIONAL: Si guardas info del IMC o metas, puedes borrarlas o dejarlas
-    // localStorage.removeItem('user_data'); 
-
-    // IMPORTANTE: NO tocamos 'fitup_codigo_vinculado'
-    // Esto permite que el usuario use SU misma clave siempre en este equipo.
-
-    alert("Sesión cerrada. La vinculación con tu FitUP se mantiene activa.");
-    
-    // 3. Redirigir a la pantalla de bloqueo/acceso
-    // Asegúrate de que esta función o lógica muestre el screen-lock
-    location.reload(); // Una forma rápida y limpia de volver al estado inicial de la App
-}
-
 //llamar tips diferentes
 // --- BASE DE DATOS DE CONSEJOS PARA FITUP ---
 const tipsFitUP = [
