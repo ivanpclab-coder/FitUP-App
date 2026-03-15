@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitUP - Smart Hydration Pro</title>
@@ -13,12 +12,7 @@
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<style>
-    /* Parche de emergencia para evitar el grid en iOS */
-    #panel-rutinas, #rutinas-list {
-        display: block !important;
-    }
-</style>
+<link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
 
@@ -586,17 +580,7 @@
 </div>
 
 <script src="script.js"></script>
-<script>
-    // Esto fuerza a que se vea bien en el evento de Jahibé
-    window.addEventListener('load', function() {
-        const panel = document.getElementById('panel-rutinas');
-        if (panel) {
-            panel.style.display = 'block';
-            // Forzar repintado del navegador
-            panel.style.zIndex = '1';
-        }
-    });
-</script>
+
 
 </body>
 

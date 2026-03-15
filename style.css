@@ -616,31 +616,8 @@ input, select {
     color: var(--cian-dark);
 }
 
-.check-container {
-    display: block;
-    position: relative;
-    padding-left: 35px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
 
-.check-container input { position: absolute; opacity: 0; }
 
-.checkmark {
-    position: absolute;
-    top: 0; left: 0;
-    height: 20px; width: 20px;
-    background-color: #eee;
-    border-radius: 5px;
-    border: 2px solid var(--border);
-}
-
-.check-container input:checked ~ .checkmark {
-    background-color: var(--cian);
-    border-color: var(--cian);
-}
 
 /* Contenedor en cuadrícula 3x2 */
 .exercise-grid {
@@ -1178,14 +1155,19 @@ input, select {
 
 /* Corrección Rutinas para IOS */
 /* --- PANEL DE RUTINAS REFORMADO PARA IOS --- */
-/* Forzar una sola columna en el contenedor */
 #panel-rutinas {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    gap: 10px !important;
-    padding: 10px !important;
-    box-sizing: border-box !important;
+    display: none; /* Se activa con JS */
+    margin: 15px auto !important;
+    width: 92% !important; /* Evita que choque con los bordes del chasis */
+    padding: 15px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    
+    /* Evita que los elementos internos se desborden */
+    overflow: hidden; 
+    box-sizing: border-box;
 }
 
 /* Contenedor interno de las opciones (Checkboxes) */
@@ -1199,18 +1181,7 @@ input, select {
 
 
 /* El texto dentro del check */
-/* El texto: Esto es lo que falla en tu imagen 2 */
-.check-container span {
-    flex: 1 !important; /* Toma todo el espacio sobrante */
-    color: #0056b3 !important;
-    font-size: 14px !important; /* Tamaño legible */
-    font-weight: 700 !important;
-    margin-left: 12px !important;
-    white-space: normal !important; /* OBLIGA al texto a quedarse dentro */
-    line-height: 1.2 !important;
-    text-align: left !important;
-    display: block !important;
-}
+
 /*redes sociales*/
 .social-container a img:active {
     transform: scale(0.9);
@@ -1266,42 +1237,43 @@ input, select {
     opacity: 0.8;
 }
 
-/* FUERZA BRUTA PARA IOS - UNA COLUMNA POR FILA */
-#panel-rutinas, #rutinas-list {
-    display: block !important; /* Anula el Grid */
+
+/* Limpieza total del contenedor */
+#panel-rutinas {
+    display: block !important;
     width: 100% !important;
 }
 
-/* La tarjeta de la rutina */
+/* Estilo de la tarjeta (una debajo de otra) */
 .check-container {
     display: flex !important;
-    flex-direction: row !important; /* Check a la izquierda, texto a la derecha */
     align-items: center !important;
-    width: 100% !important;
-    min-height: 60px !important; 
-    background: #f8f9fa !important;
+    width: 95% !important;
+    margin: 10px auto !important;
+    background: #ffffff !important;
     border: 1px solid #cce5ff !important;
     border-radius: 12px !important;
-    padding: 10px 15px !important;
+    padding: 15px !important;
     box-sizing: border-box !important;
-    margin-bottom: 5px !important;
+    min-height: 60px !important;
 }
 
-/* Arreglo para el texto invisible o cortado */
-.check-container label, .check-container span {
+/* Estilo del texto (para que NO se salga a la derecha) */
+.check-container span {
     flex: 1 !important;
-    font-size: 14px !important;
+    margin-left: 15px !important;
+    font-size: 15px !important;
     color: #0056b3 !important;
-    margin-left: 10px !important;
-    white-space: normal !important; /* Obliga al texto a saltar de línea y no salirse */
+    font-weight: bold !important;
+    white-space: normal !important; /* IMPORTANTE: obliga al texto a bajar de línea */
     word-break: break-word !important;
     display: block !important;
 }
 
-/* El cuadro de selección */
+/* El checkbox normal (más confiable para iOS) */
 .check-container input[type="checkbox"] {
-    width: 24px !important;
-    height: 24px !important;
+    width: 25px !important;
+    height: 25px !important;
     flex-shrink: 0 !important; /* Evita que el check se aplaste */
-    margin: 0 !important;
+    cursor: pointer;
 }

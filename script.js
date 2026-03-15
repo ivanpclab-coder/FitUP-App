@@ -925,12 +925,12 @@ function renderizarRutinas(lista) {
 
     lista.forEach(rutina => {
         const div = document.createElement('div');
-        div.className = 'check-container';
+        // Usamos una clase nueva para evitar conflictos con el CSS viejo
+        div.className = 'fila-rutina-ios'; 
         
-        // Estructura lineal: input y luego el texto
         div.innerHTML = `
-            <input type="checkbox" id="ex-${rutina.id}" value="${rutina.nombre}">
-            <span>${rutina.nombre}</span>
+            <input type="checkbox" id="rut-${rutina.id}" value="${rutina.nombre}">
+            <label for="rut-${rutina.id}">${rutina.nombre}</label>
         `;
         
         contenedor.appendChild(div);
