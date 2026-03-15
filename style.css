@@ -1223,3 +1223,41 @@ input, select {
 }
 
 
+/* FUERZA BRUTA PARA IOS - COPIAR AL FINAL DEL CSS */
+#panel-rutinas {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+}
+
+.check-container {
+    display: block !important; /* Cambiamos de flex a block para asegurar */
+    width: 100% !important;
+    background-color: #ffffff !important;
+    border: 2px solid #007bff !important; /* Un borde más grueso para notar el cambio */
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+    clear: both !important;
+    overflow: hidden !important;
+}
+
+.check-container input[type="checkbox"] {
+    float: left !important; /* Flotamos el check a la izquierda */
+    width: 25px !important;
+    height: 25px !important;
+    margin-right: 15px !important;
+}
+
+.check-container span {
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    white-space: normal !important; /* OBLIGA al texto a bajar de línea */
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
+}

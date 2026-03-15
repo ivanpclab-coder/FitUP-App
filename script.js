@@ -924,14 +924,12 @@ function renderizarRutinas(lista) {
 
     lista.forEach(rutina => {
         const div = document.createElement('div');
-        div.className = 'check-container'; // Tu clase de siempre
+        div.className = 'check-container';
         
-        // Estructura lineal simple que Safari sí respeta
+        // Estructura simplificada al máximo
         div.innerHTML = `
-            <input type="checkbox" id="rut-${rutina.id}" value="${rutina.nombre}">
-            <span style="flex: 1; margin-left: 10px; white-space: normal; word-break: break-word; display: block;">
-                ${rutina.nombre}
-            </span>
+            <input type="checkbox" id="rut-${rutina.id}">
+            <span>${rutina.nombre}</span>
         `;
         contenedor.appendChild(div);
     });
