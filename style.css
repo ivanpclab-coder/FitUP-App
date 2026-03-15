@@ -376,6 +376,7 @@ input, select {
     font-weight: 900;    
     background: linear-gradient(90deg, #219ab5, #0077FF);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 5px;
     letter-spacing: -1px;
@@ -715,24 +716,16 @@ input, select {
     float: none !important;      /* Bloquea que se pongan de lado */
 }
 
+
+
+
+/* El texto de la rutina - AQUÍ ESTÁ EL ARREGLO */
 .check-container span {
-    font-size: 15px !important;
-    color: #0056b3;
-    margin-left: 12px !important;
-    white-space: normal !important; /* Permite que el texto baje si es largo */
-    line-height: 1.2 !important;
     flex: 1 !important;
+    margin-left: 10px !important;
+    white-space: normal !important; /* ESTO evita que el texto se escape */
+    word-break: break-word !important;
 }
-
-
-/* Opcional: Si el checkbox tiene un margen automático, quítalo */
-.check-container input[type="checkbox"] {
-    margin: 0; 
-}
-
-
-/* El contenedor ya no es una cuadrícula, es una lista simple */
-/* El contenedor ya no es una cuadrícula, es una lista simple */
 
 
 /* Cada opción es ahora una barra horizontal */
@@ -773,12 +766,9 @@ input, select {
     cursor: pointer;
 }
 
-/* El panel donde aparecen las rutinas al hacer clic */
+/* ARREGLO FINAL PARA RUTINAS EN IPHONE */
 #panel-rutinas {
-    display: block !important; /* OBLIGATORIO para iOS */
-    width: 100% !important;
-    padding: 10px;
-    box-sizing: border-box;
+    display: block !important; /* Safari no se confunde con esto */
 }
 
 /* Ajuste específico para el contenedor del gráfico en el Dashboard */
@@ -1212,40 +1202,24 @@ input, select {
     opacity: 0.8;
 }
 
-/* LA TARJETA DE LA RUTINA (Lo que se ve mal en tu imagen) */
+
 .check-container {
     display: flex !important;
-    flex-direction: row !important;
     align-items: center !important;
-    width: 100% !important;
-    background: #ffffff !important;
-    border: 1px solid #cce5ff !important;
+    width: 95% !important;
+    margin: 10px auto !important;
+    background: white !important;
+    padding: 12px !important;
     border-radius: 12px !important;
-    padding: 12px 15px !important;
-    margin-bottom: 10px !important;
     box-sizing: border-box !important;
-    position: relative !important;
 }
 
-
-/* Estilo de la tarjeta (una debajo de otra) */
-
-/* Estilo del texto (para que NO se salga a la derecha) */
-.check-container span {
-    flex: 1 !important;
-    margin-left: 15px !important;
-    font-size: 15px !important;
-    color: #0056b3 !important;
-    font-weight: bold !important;
-    white-space: normal !important; /* IMPORTANTE: obliga al texto a bajar de línea */
-    word-break: break-word !important;
-    display: block !important;
-}
-
-/* El checkbox normal (más confiable para iOS) */
+/* El cuadrito del Checkbox */
 .check-container input[type="checkbox"] {
-    width: 25px !important;
-    height: 25px !important;
-    flex-shrink: 0 !important; /* Evita que el check se aplaste */
+    width: 22px !important;
+    height: 22px !important;
+    flex-shrink: 0 !important; /* Evita que el iPhone lo aplaste */
     cursor: pointer;
 }
+
+
