@@ -767,10 +767,54 @@ input, select {
 }
 
 /* ARREGLO FINAL PARA RUTINAS EN IPHONE */
+/* Forzar lista vertical y eliminar problemas de visualización en iOS */
+/* ELIMINACIÓN DE GRID Y FORZADO DE LISTA */
 #panel-rutinas {
-    display: block !important; /* Safari no se confunde con esto */
+    display: block !important; /* Mata el grid */
+    width: 100% !important;
+    padding: 10px !important;
 }
 
+/* Estilo para los nuevos elementos de lista (reemplazan al check) */
+.item-lista-vertical {
+    display: block !important; /* Asegura que cada item sea una línea completa */
+    width: 100% !important;
+    margin-bottom: 12px !important; /* Espacio entre rutinas */
+    background-color: #FFFFFF !important;
+    border: 2px solid #AABFC1 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.rutina-item-lista.seleccionado {
+    border-color: #00D1FF;
+    background-color: #E0F7FA;
+    transform: scale(0.98);
+}
+
+.contenido-item {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 15px !important; /* Tamaño cómodo para tocar en iPhone */
+}
+
+.nombre-rutina {
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    color: #102A2D !important;
+    text-align: left;
+}
+
+.rutina-item-lista span {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #102A2D;
+}
+
+.icon-select {
+    font-size: 1.2rem;
+}
 /* Ajuste específico para el contenedor del gráfico en el Dashboard */
 #circleChart {
     filter: drop-shadow(0 0 10px rgba(0, 255, 55, 0.2));
@@ -1224,13 +1268,6 @@ input, select {
 
 
 /* FUERZA BRUTA PARA IOS - COPIAR AL FINAL DEL CSS */
-#panel-rutinas {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 10px !important;
-    box-sizing: border-box !important;
-}
 
 .check-container {
     display: block !important; /* Cambiamos de flex a block para asegurar */
@@ -1260,4 +1297,164 @@ input, select {
     white-space: normal !important; /* OBLIGA al texto a bajar de línea */
     word-wrap: break-word !important;
     line-height: 1.4 !important;
+}
+
+
+/* FORZAR LISTA VERTICAL EN CATEGORÍAS */
+#categorias-container {
+    display: flex !important;
+    flex-direction: column !important; /* Apila hacia abajo */
+    display: block; /* Respaldo si flex falla */
+    gap: 15px !important;
+    padding: 15px !important;
+}
+
+.categoria-item, .categoria-item-lista {
+    display: flex !important;
+    width: 100% !important; /* Ocupa todo el ancho */
+    margin-bottom: 12px !important;
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+
+.indicador-seleccion {
+    font-size: 1.2rem;
+}
+
+/* Estado seleccionado */
+.item-lista-vertical.seleccionado-active {
+    border-color: #00D1FF !important;
+    background-color: #E0F7FA !important;
+}
+
+/* FORZADO DE LISTA VERTICAL TOTAL */
+.lista-vertical-item {
+    display: block !important;
+    width: 95% !important; /* Casi todo el ancho */
+    margin: 10px auto !important; /* Centrado y separado */
+    background: #ffffff !important;
+    border: 2px solid #AABFC1 !important;
+    border-radius: 12px !important;
+    padding: 20px !important; /* Espacio grande para tocar en iPhone */
+    box-sizing: border-box !important;
+    clear: both !important; /* Evita que se suban al lado de otro */
+    position: relative !important;
+}
+
+.lista-vertical-item.active {
+    border-color: #00D1FF !important;
+    background-color: #E0F7FA !important;
+}
+
+.item-flex-content {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-label {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #102A2D;
+}
+
+
+/* FORZAR FILAS COMPLETAS (ELIMINAR MINI-CUADROS) */
+.rutina-fila-unica {
+    display: block !important;
+    width: 90% !important; /* Ocupa casi todo el ancho */
+    margin: 12px auto !important; /* Centrado y separado por arriba/abajo */
+    background: white !important;
+    border: 2px solid #AABFC1 !important;
+    border-radius: 15px !important;
+    padding: 18px !important;
+    box-sizing: border-box !important;
+    clear: both !important; /* Evita que se ponga uno al lado del otro */
+    position: relative !important;
+}
+
+.rutina-fila-unica.seleccionada {
+    border-color: #00D1FF !important;
+    background-color: #E0F7FA !important;
+}
+
+.rutina-fila-unica span {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #102A2D;
+    display: inline-block;
+}
+
+/* Ajuste para la pantalla de Bienvenida */
+#screen-access {
+    
+
+    display: none; /* Se activa con la clase .active */
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    /* Permitir scroll si el contenido es muy largo */
+    overflow-y: auto !important; 
+    height: 100%;
+    box-sizing: border-box;
+}
+
+
+
+#screen-access.active {
+    display: flex;
+}
+
+/* Ajuste específico para la botella y el botón */
+.welcome-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 40px; /* Espacio extra al final para que no pegue al borde */
+}
+
+.botella-img {
+    max-width: 180px; /* Ajusta el tamaño según prefieras */
+    height: auto;
+    margin: 20px 0;
+    /* Filtro opcional para que resalte */
+    filter: drop-shadow(0 0 10px rgba(0, 209, 255, 0.3));
+}
+
+/* ELIMINACIÓN TOTAL DEL RECUADRO EN EL BOTÓN DE SINCRONIZAR */
+#screen-access .card, 
+#screen-access .grid, 
+#screen-access .categorias-grid,
+#screen-access div {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Asegurar que el botón "Sincronizar" sea el único que resalte */
+#screen-access .btn-main {
+    border: none !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 20px auto !important;
+    background-color: var(--cian) !important; /* Mantiene el color del botón */
+    color: #102A2D !important;
+    box-shadow: 0 4px 15px rgba(0, 209, 255, 0.4) !important;
+}
+#btn-sync.btn-main {
+    background: #FF5500 !important; /* Cambia este código de color al que gustes */
+    color: white !important;
+    border: none !important;
+    border-radius: 50px !important; /* Lo hace más redondeado y moderno */
+    padding: 15px 20px !important;
+    font-weight: 900 !important;
+    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4) !important; /* Sombra del mismo color */
+    transform: translateY(-10px); /* Esto lo mueve físicamente hacia arriba */
 }

@@ -19,7 +19,7 @@ function showScreen(id) {
 
 const temas = {
     'screen-dash': '#5e9918',        // Verde desvanecido
-    'screen-access': '#12a5c2', // Azul desvanecido
+    'screen-access': '#16915e', // Azul desvanecido
     'screen-hidratacion': '#c98fdb',
     'screen-data': '#f39c12',        // Naranja desvanecido
     'screen-config': '#f8bf89',        // Naranja desvanecido
@@ -170,29 +170,6 @@ function actualizarWidgetEjercicios() {
     actualizarProgresoRutina(0, user.routines.length);
 }
 
-function iniciarRutina() {
-    // 1. Capturamos todos los ejercicios que el usuario marcó con el checkbox
-    const seleccionados = [];
-    const checks = document.querySelectorAll('.rutina-check:checked');
-    
-    checks.forEach(check => {
-        // Buscamos el texto que está dentro del <span> al lado del checkbox
-        const nombreEjercicio = check.parentElement.querySelector('span').innerText;
-        seleccionados.push(nombreEjercicio);
-    });
-
-    // 2. Validación: Si no eligió nada, avisamos
-    if (seleccionados.length === 0) {
-        alert("Selecciona al menos una rutina para comenzar.");
-        return;
-    }
-
-    // 3. GUARDAR EN EL OBJETO GLOBAL (Esto es lo que le falta a tu código)
-    user.routines = seleccionados;
-
-    // 4. Ir al Dashboard
-    showScreen('screen-dash');
-}
 
 let circChart = null;
 
@@ -652,16 +629,18 @@ const rutinasDB = {
     }
 };
 
+
+
 // --- FUNCIÓN PRINCIPAL ---
 function selectEx(el, categoryName) {
-    // 1. Resaltar selección visual
+    // 1. Resaltar selección visual de la categoría
     user.selectedEx = categoryName;
     document.querySelectorAll('.ex-card-mini').forEach(card => card.classList.remove('selected'));
-    el.classList.add('selected');
+    if(el) el.classList.add('selected');
 
     const panel = document.getElementById('panel-rutinas');
     
-    // 2. Obtener Nivel actual (Limpiando texto)
+    // 2. Obtener Nivel actual
     let nivelActual = "Básico";
     const elemNivel = document.getElementById('res-nivel-entreno');
     if (elemNivel) {
@@ -669,49 +648,73 @@ function selectEx(el, categoryName) {
         if (txt.includes("Principiante")) nivelActual = "Principiante";
         else if (txt.includes("Intermedio")) nivelActual = "Intermedio";
         else if (txt.includes("Avanzado")) nivelActual = "Avanzado";
-        else nivelActual = "Básico";
     }
 
-    // 3. Buscar datos
+    // 3. Buscar datos en la DB
     const cat = categoryName.toUpperCase();
-    const data = rutinasDB[nivelActual][cat];
+    const data = rutinasDB[nivelActual] ? rutinasDB[nivelActual][cat] : null;
 
     if (data) {
-        // 4. Generar HTML (Centrado, 2 columnas x 3 filas)
-        let html = `<h3 style="text-align:center; color:#0055ff; margin-bottom:15px; font-size:1.2rem;">Seleccione las rutinas</h3>`;
+        // 4. Generar HTML en LISTA VERTICAL (Sin Grid)
+        let html = `<h3 style="text-align:center; color:#0055ff; margin:15px 0; font-size:1.1rem;">Seleccione las rutinas</h3>`;
         
-        html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; justify-items: center;">`;
+        // Contenedor principal en bloque para evitar columnas
+        html += `<div id="lista-rutinas-vertical" style="display: block !important; width: 100%;">`;
         
-        data.ej.forEach(item => {
+        data.ej.forEach((item, index) => {
+            // Creamos cada opción como una fila completa
             html += `
-                <label style="display:flex; align-items:center; gap:8px; width:100%; background:#f0f8ff; padding:10px; border-radius:8px; border:1px solid #cceeff; cursor:pointer; font-size:0.85rem;">
-                    <input type="checkbox" class="rutina-check" onchange="validateSelections()" style="transform: scale(1.2);">
-                    <span>${item}</span>
-                </label>`;
+                <div class="rutina-fila" 
+                     onclick="toggleRutinaCheck(this)" 
+                     style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #cceeff; cursor: pointer; transition: 0.2s;">
+                    
+                    <span style="font-weight: bold; color: #102A2D; font-size: 0.95rem;">${item}</span>
+                    
+                    <div class="check-indicador" style="width: 24px; height: 24px; border: 2px solid #00D1FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: transparent; font-weight: bold;">
+                        ✓
+                    </div>
+                    
+                    <input type="checkbox" class="rutina-check" style="display: none;">
+                </div>`;
         });
         
         html += `</div>`;
         
-        // Mensaje de descanso
-        html += `<div style="margin-top:20px; padding:10px; background:#fff3e0; color:#e65100; font-weight:bold; border-radius:8px; text-align:center; border:1px solid #ffe0b2;">
-                    ${data.desc}
+        // Cuadro de descanso
+        html += `<div style="margin-top:20px; padding:12px; background:#fff3e0; color:#e65100; font-weight:bold; border-radius:10px; text-align:center; border:1px solid #ffe0b2; font-size: 0.85rem;">
+                    ⏱️ ${data.desc}
                 </div>`;
 
         panel.innerHTML = html;
         panel.style.display = 'block';
     } else {
-        panel.innerHTML = `<p style="text-align:center; color:red;">No se encontraron ejercicios para ${categoryName}</p>`;
+        panel.innerHTML = `<p style="text-align:center; color:red;">No se encontraron ejercicios</p>`;
     }
     
     validateSelections();
 }
 
-function validateSelections() {
-    const checks = document.querySelectorAll('.rutina-check:checked');
-    const btn = document.getElementById('btn-iniciar-rutina');
-    if (btn) btn.style.display = checks.length > 0 ? 'block' : 'none';
+// Función auxiliar para manejar la selección visual y el checkbox oculto
+function toggleRutinaCheck(elemento) {
+    const checkbox = elemento.querySelector('.rutina-check');
+    const indicador = elemento.querySelector('.check-indicador');
+    
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        elemento.style.borderColor = "#00D1FF";
+        elemento.style.backgroundColor = "#E0F7FA";
+        indicador.style.backgroundColor = "#00D1FF";
+        indicador.style.color = "white";
+    } else {
+        elemento.style.borderColor = "#cceeff";
+        elemento.style.backgroundColor = "white";
+        indicador.style.backgroundColor = "transparent";
+        indicador.style.color = "transparent";
+    }
+    
+    validateSelections(); // Llamamos a tu función de validación existente
 }
-
 
 /*Usuario-Código*/
 
@@ -918,19 +921,68 @@ function ejecutarAccionBeber() {
 }
 
 function renderizarRutinas(lista) {
-    const contenedor = document.getElementById('panel-rutinas');
-    if (!contenedor) return;
-    contenedor.innerHTML = ''; 
+    const container = document.getElementById('panel-rutinas');
+    if (!container) return;
+    
+    container.innerHTML = ""; // Limpieza total
+    container.style.display = "block"; // Asegura que el contenedor sea bloque
 
-    lista.forEach(rutina => {
+    lista.forEach(nombre => {
         const div = document.createElement('div');
-        div.className = 'check-container';
+        div.className = 'rutina-fila-unica'; // Clase nueva para evitar el Grid
+        div.dataset.nombre = nombre;
         
-        // Estructura simplificada al máximo
         div.innerHTML = `
-            <input type="checkbox" id="rut-${rutina.id}">
-            <span>${rutina.nombre}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>${nombre}</span>
+                <div class="check-visual">➕</div>
+            </div>
         `;
-        contenedor.appendChild(div);
+
+        div.onclick = function() {
+            this.classList.toggle('seleccionada');
+            const check = this.querySelector('.check-visual');
+            if(this.classList.contains('seleccionada')) {
+                check.innerText = "✅";
+            } else {
+                check.innerText = "➕";
+            }
+        };
+
+        container.appendChild(div);
     });
+}
+
+function iniciarRutina() {
+    // 1. Creamos una lista para guardar los nombres seleccionados
+    const seleccionados = [];
+    
+    // 2. Buscamos todas las filas que tienen el fondo azul/seleccionado
+    // Nota: Usamos la lógica de los estilos que aplicamos anteriormente
+    const filas = document.querySelectorAll('.rutina-fila');
+    
+    filas.forEach(fila => {
+        // Verificamos si el checkbox interno está marcado
+        const cb = fila.querySelector('.rutina-check');
+        if (cb && cb.checked) {
+            // Extraemos el nombre de la rutina del span
+            const nombre = fila.querySelector('span').innerText;
+            seleccionados.push(nombre);
+        }
+    });
+
+    // 3. Validación de seguridad
+    if (seleccionados.length === 0) {
+        alert("⚠️ Por favor, selecciona al menos una rutina para comenzar.");
+        return;
+    }
+
+    // 4. Guardar en el perfil del usuario y avanzar
+    user.routines = seleccionados;
+    
+    // Feedback visual opcional antes de cambiar de pantalla
+    console.log("Rutinas guardadas:", user.routines);
+    
+    // Cambiar a la pantalla principal
+    showScreen('screen-dash');
 }

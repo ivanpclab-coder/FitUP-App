@@ -13,15 +13,7 @@
     <link rel="stylesheet" href="style.css?v=99">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 
-<style>
-        /* Parche de emergencia directo en el HTML para asegurar que el panel nunca sea Grid */
-        #panel-rutinas {
-            display: block !important;
-            width: 100% !important;
-            min-height: 50px;
-            margin-top: 15px;
-        }
-    </style>
+
 </head>
 <body>
 
@@ -70,6 +62,8 @@
     <p class="slogan-text">Hidratación inteligente. Vida inteligente</p>
     
     <div class="glass-card" style="width: 80%; margin-top: 20px; min-height: 60px; position: relative;">
+    <div style="width: 80%; margin-top: 5px; position: relative; border: none !important; background: none !important;"></div>
+        
         <button id="btn-sync" class="btn-main" onclick="startLoading()">Sincronizar tu FitUP</button>
         
         <div id="loading-area" style="display:none; margin-top: 15px;">
@@ -83,6 +77,9 @@
             </div>
             <div style="display: flex; justify-content: center; margin-top: 15px;">
         <img src="botella2.png" alt="Botella" style="max-width: 100px; height: auto;">
+        <p style="color: #1f1e1e; font-size: 0.8rem; margin-top: 15px;">
+            v1.0.1 - Jahibé Labs
+        </p>
     </div>
         </div>
     </div>
@@ -199,7 +196,8 @@
              
              <label style="text-align: center; display: block; width: 100%;"> CATEGORIA DE EJERCICIOS</label>
         </div>
-        
+    
+     
 
 <div id="summary-container" class="grid-ejercicios" style="margin-bottom: 30px;">
     </div>
@@ -235,21 +233,16 @@
         <p class="ex-mini-title">ACUÁTICO</p>
         <p class="ex-mini-tag">(Agua)</p>
     </div>
-     </div>
-        
-    <div id="panel-rutinas" class="glass-card panel-futurista">
-    </div>
+     </div>    
     
-    <button class="btn-iniciar-rutina" onclick="iniciarRutina()">
-    <span class="main-text-btn">INICIAR RUTINA</span>
-    <span class="sub-text-btn">Comenzar entrenamiento</span>
-    </button>
-
-        
+    <div id="panel-rutinas" style="display: block !important; width: 100% !important; clear: both !important;">
+    </div>    
+    
+    <button onclick="iniciarRutina()" style="width:100%; padding:15px; background:#ffbe24; color:rgb(12, 12, 12); border:none; border-radius:10px; font-weight:bold; margin-top:20px;">
+    INICIAR ENTRENAMIENTO
+    </button>          
 
     </div>   
-
-
     <div id="screen-dash" class="screen">
         <div style="text-align: center; margin-bottom: 10px;"><img src="fitUP.png" style="width: 80px;"></div>
         <div class="glass-card" style="text-align: center;">
