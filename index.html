@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitUP - Smart Hydration Pro</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4.0">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="stylesheet" href="style.css?v=2.0">
+<style>
+        /* Parche de emergencia directo en el HTML para asegurar que el panel nunca sea Grid */
+        #panel-rutinas {
+            display: block !important;
+            width: 100% !important;
+            min-height: 50px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 

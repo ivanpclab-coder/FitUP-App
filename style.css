@@ -620,13 +620,7 @@ input, select {
 
 
 /* Contenedor en cuadrícula 3x2 */
-.exercise-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
-    grid-template-rows: repeat(2, auto);    /* 2 filas */
-    gap: 10px;
-    margin-bottom: 20px; /* Espacio libre abajo para tus futuros datos */
-}
+
 
 /* Tarjeta minimalista futurista */
 .ex-card-mini {
@@ -730,12 +724,7 @@ input, select {
     flex: 1 !important;
 }
 
-/* IMPORTANTE: Forzamos al contenedor principal a no ser Grid */
-#panel-rutinas, #rutinas-list {
-    display: block !important; 
-    width: 100% !important;
-    column-count: 1 !important;
-}
+
 /* Opcional: Si el checkbox tiene un margen automático, quítalo */
 .check-container input[type="checkbox"] {
     margin: 0; 
@@ -744,11 +733,7 @@ input, select {
 
 /* El contenedor ya no es una cuadrícula, es una lista simple */
 /* El contenedor ya no es una cuadrícula, es una lista simple */
-#panel-rutinas {
-    display: block !important;
-    width: 100% !important;
-    padding: 10px !important;
-}
+
 
 /* Cada opción es ahora una barra horizontal */
 .rutina-option {
@@ -788,10 +773,12 @@ input, select {
     cursor: pointer;
 }
 
-#panel-rutinas label:hover {
-    background-color: #e6f7ff !important;
-    border-color: #00d1ff !important;
-    transition: 0.3s;
+/* El panel donde aparecen las rutinas al hacer clic */
+#panel-rutinas {
+    display: block !important; /* OBLIGATORIO para iOS */
+    width: 100% !important;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 /* Ajuste específico para el contenedor del gráfico en el Dashboard */
@@ -1112,13 +1099,14 @@ input, select {
 
 /* --- AJUSTE DE CATEGORÍAS: 2 COLUMNAS Y MÁS GRANDE --- */
 
-/* 1. Forzamos el contenedor a 2 columnas */
+/* Contenedor de las categorías (Cancha, Pista, etc.) */
 .exercise-grid {
-    grid-template-columns: 1fr 1fr !important; /* Mantenemos 2 columnas */
-    gap: 10px !important;    /* Reducimos el espacio entre tarjetas */
-    padding: 4px !important; /* Menos espacio en los bordes */
-    margin-bottom: 10px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Android lo entiende bien */
+    gap: 10px;
+    padding: 10px;
 }
+
 
 /* 2. Hacemos la tarjeta más alta y espaciosa */
 .ex-card-mini {
@@ -1155,20 +1143,7 @@ input, select {
 
 /* Corrección Rutinas para IOS */
 /* --- PANEL DE RUTINAS REFORMADO PARA IOS --- */
-#panel-rutinas {
-    display: none; /* Se activa con JS */
-    margin: 15px auto !important;
-    width: 92% !important; /* Evita que choque con los bordes del chasis */
-    padding: 15px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 20px;
-    border: 2px solid var(--border);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    
-    /* Evita que los elementos internos se desborden */
-    overflow: hidden; 
-    box-sizing: border-box;
-}
+
 
 /* Contenedor interno de las opciones (Checkboxes) */
 .rutinas-grid-2x3 {
@@ -1237,26 +1212,23 @@ input, select {
     opacity: 0.8;
 }
 
-
-/* Limpieza total del contenedor */
-#panel-rutinas {
-    display: block !important;
-    width: 100% !important;
-}
-
-/* Estilo de la tarjeta (una debajo de otra) */
+/* LA TARJETA DE LA RUTINA (Lo que se ve mal en tu imagen) */
 .check-container {
     display: flex !important;
+    flex-direction: row !important;
     align-items: center !important;
-    width: 95% !important;
-    margin: 10px auto !important;
+    width: 100% !important;
     background: #ffffff !important;
     border: 1px solid #cce5ff !important;
     border-radius: 12px !important;
-    padding: 15px !important;
+    padding: 12px 15px !important;
+    margin-bottom: 10px !important;
     box-sizing: border-box !important;
-    min-height: 60px !important;
+    position: relative !important;
 }
+
+
+/* Estilo de la tarjeta (una debajo de otra) */
 
 /* Estilo del texto (para que NO se salga a la derecha) */
 .check-container span {

@@ -917,22 +917,30 @@ function ejecutarAccionBeber() {
     }, 4000); // Los 4 segundos de espera
 }
 
-// Ejemplo de cómo generar cada fila
 function renderizarRutinas(lista) {
     const contenedor = document.getElementById('panel-rutinas');
     if (!contenedor) return;
-    contenedor.innerHTML = ''; 
+    
+    contenedor.innerHTML = ''; // Limpiar lo anterior
 
     lista.forEach(rutina => {
         const div = document.createElement('div');
-        // Usamos una clase nueva para evitar conflictos con el CSS viejo
-        div.className = 'fila-rutina-ios'; 
+        div.className = 'check-container';
         
+        // Estructura simple que Safari interpreta correctamente
         div.innerHTML = `
-            <input type="checkbox" id="rut-${rutina.id}" value="${rutina.nombre}">
-            <label for="rut-${rutina.id}">${rutina.nombre}</label>
+            <input type="checkbox" id="rut-${rutina.id}" value="${rutina.nombre}" 
+                   ${rutina.completada ? 'checked' : ''}>
+            <span>${rutina.nombre}</span>
         `;
         
+        // Si tienes lógica de guardado al hacer clic, agrégala aquí
+        const check = div.querySelector('input');
+        check.addEventListener('change', () => {
+            // Tu lógica actual para marcar como completada
+            console.log("Rutina marcada:", rutina.nombre);
+        });
+
         contenedor.appendChild(div);
     });
 }
