@@ -9,6 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<style>
+    /* Parche de emergencia para evitar el grid en iOS */
+    #panel-rutinas, #rutinas-list {
+        display: block !important;
+    }
+</style>
 </head>
 <body>
 
@@ -576,40 +585,20 @@
 </div>
 
 <script src="script.js"></script>
-</body>
-
 <script>
-    function arreglarDiseñoIOS() {
+    // Esto fuerza a que se vea bien en el evento de Jahibé
+    window.addEventListener('load', function() {
         const panel = document.getElementById('panel-rutinas');
         if (panel) {
-            // 1. Forzamos el contenedor a ser una sola columna
-            panel.style.setProperty('display', 'block', 'important');
-            panel.style.setProperty('column-count', '1', 'important');
-            
-            // 2. Buscamos todas las tarjetas de rutina
-            const tarjetas = panel.querySelectorAll('.check-container');
-            tarjetas.forEach(tarjeta => {
-                // Forzamos cada tarjeta a ocupar el 100% y ser un bloque independiente
-                tarjeta.style.setProperty('display', 'flex', 'important');
-                tarjeta.style.setProperty('width', '100%', 'important');
-                tarjeta.style.setProperty('max-width', '100%', 'important');
-                tarjeta.style.setProperty('margin-bottom', '15px', 'important');
-                tarjeta.style.setProperty('float', 'none', 'important');
-                
-                // Forzamos al texto a quedarse adentro
-                const texto = tarjeta.querySelector('span');
-                if (texto) {
-                    texto.style.setProperty('white-space', 'normal', 'important');
-                    texto.style.setProperty('flex', '1', 'important');
-                    texto.style.setProperty('display', 'block', 'important');
-                }
-            });
+            panel.style.display = 'block';
+            // Forzar repintado del navegador
+            panel.style.zIndex = '1';
         }
-    }
-
-    // Ejecutamos la función al cargar y cada vez que cambie algo
-    window.onload = arreglarDiseñoIOS;
-    setInterval(arreglarDiseñoIOS, 1000); 
+    });
 </script>
+
+</body>
+
+
 
 </html>

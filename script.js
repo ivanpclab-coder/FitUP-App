@@ -916,3 +916,25 @@ function ejecutarAccionBeber() {
 
     }, 4000); // Los 4 segundos de espera
 }
+
+// Ejemplo de cómo generar cada fila
+function renderizarRutinas(lista) {
+    const contenedor = document.getElementById('panel-rutinas');
+    if (!contenedor) return;
+    contenedor.innerHTML = ''; 
+
+    lista.forEach(rutina => {
+        const div = document.createElement('div');
+        div.className = 'check-container';
+        
+        // Estructura lineal simplificada para evitar errores de alineación en iOS
+        div.innerHTML = `
+            <input type="checkbox" id="rutina-${rutina.id}" value="${rutina.nombre}">
+            <label for="rutina-${rutina.id}">
+                ${rutina.nombre}
+            </label>
+        `;
+        
+        contenedor.appendChild(div);
+    });
+}

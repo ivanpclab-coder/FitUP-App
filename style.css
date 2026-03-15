@@ -704,14 +704,7 @@ input, select {
 
 
 
-/*Recien
-/* Cuadrícula de rutinas 2 columnas x 3 filas */
-.rutinas-grid-2x3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 columnas */
-    gap: 15px;
-    margin: 15px 0;
-}
+
 
 .panel-header {
     text-align: center;
@@ -740,27 +733,74 @@ input, select {
     display: flex !important;
     align-items: center !important;
     background: #f8f9fa;
-    padding: 10px 8px !important;
+    padding: 12px 15px !important;
     border-radius: 12px;
-    border: 1px solid var(--border);
-    min-height: 45px; /* Altura fija para que todas sean iguales */
-    margin-bottom: 0 !important; /* iOS suele añadir márgenes fantasma */
+    border: 1px solid #cce5ff !important; /* Borde celeste visible */
+    width: 100% !important;      /* Ocupa todo el ancho */
+    max-width: 100% !important;
+    margin-bottom: 12px !important; /* Espacio entre filas */
+    box-sizing: border-box !important;
+    position: relative !important;
+    float: none !important;      /* Bloquea que se pongan de lado */
 }
 
+.check-container span {
+    font-size: 15px !important;
+    color: #0056b3;
+    margin-left: 12px !important;
+    white-space: normal !important; /* Permite que el texto baje si es largo */
+    line-height: 1.2 !important;
+    flex: 1 !important;
+}
+
+/* IMPORTANTE: Forzamos al contenedor principal a no ser Grid */
+#panel-rutinas, #rutinas-list {
+    display: block !important; 
+    width: 100% !important;
+    column-count: 1 !important;
+}
 /* Opcional: Si el checkbox tiene un margen automático, quítalo */
 .check-container input[type="checkbox"] {
     margin: 0; 
 }
 
 
+/* El contenedor ya no es una cuadrícula, es una lista simple */
+/* El contenedor ya no es una cuadrícula, es una lista simple */
 #panel-rutinas {
-    width: 95%;
-    margin: 20px auto;
-    padding: 10px;
-    box-sizing: border-box;
-    animation: fadeIn 0.4s ease-out;
+    display: block !important;
+    width: 100% !important;
+    padding: 10px !important;
 }
 
+/* Cada opción es ahora una barra horizontal */
+.rutina-option {
+    display: block !important;
+    width: 100% !important;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+    box-sizing: border-box !important;
+}
+
+/* Cuando el usuario hace clic (Seleccionado) */
+.rutina-option.selected {
+    background: #007AFF !important; /* Azul tipo iOS */
+    color: white !important;
+    border-color: #0056b3 !important;
+    font-weight: bold;
+}
+
+/* Para que el texto se lea bien en iOS */
+.rutina-option span {
+    font-size: 16px;
+    pointer-events: none; /* Para que el clic pase al botón */
+}
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1227,3 +1267,39 @@ input, select {
     opacity: 0.8;
 }
 
+/* FUERZA BRUTA PARA IOS - UNA COLUMNA POR FILA */
+#panel-rutinas, #rutinas-list {
+    display: block !important; /* Anula el Grid */
+    width: 100% !important;
+}
+
+.check-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 60px !important; /* Altura suficiente para el texto */
+    margin-bottom: 12px !important;
+    background: #ffffff !important;
+    border: 1px solid #cce5ff !important;
+    border-radius: 12px !important;
+    padding: 10px 15px !important;
+    box-sizing: border-box !important;
+}
+
+/* Arreglo para el texto invisible o cortado */
+.check-container label, .check-container span {
+    flex: 1 !important;
+    font-size: 14px !important;
+    color: #0056b3 !important;
+    margin-left: 10px !important;
+    white-space: normal !important; /* Obliga al texto a saltar de línea y no salirse */
+    word-break: break-word !important;
+    display: block !important;
+}
+
+.check-container input[type="checkbox"] {
+    width: 24px !important;
+    height: 24px !important;
+    flex-shrink: 0 !important; /* Evita que el check se aplaste */
+}
