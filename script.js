@@ -927,12 +927,10 @@ function renderizarRutinas(lista) {
         const div = document.createElement('div');
         div.className = 'check-container';
         
-        // Estructura lineal simplificada para evitar errores de alineación en iOS
+        // Estructura lineal: input y luego el texto
         div.innerHTML = `
-            <input type="checkbox" id="rutina-${rutina.id}" value="${rutina.nombre}">
-            <label for="rutina-${rutina.id}">
-                ${rutina.nombre}
-            </label>
+            <input type="checkbox" id="ex-${rutina.id}" value="${rutina.nombre}">
+            <span>${rutina.nombre}</span>
         `;
         
         contenedor.appendChild(div);
