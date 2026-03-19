@@ -1007,24 +1007,17 @@ function rotarEntrenador() {
             if(texto) texto.innerText = "FITUP CORE";
             currentEx = 0; 
         } else {
-            // TRUCO: Intentamos cargar en minúsculas primero
-            const nombreBase = `ex${currentEx}`;
-            img.src = `${nombreBase}.png`;
-
-            // Si falla (error 404), intentamos automáticamente con MAYÚSCULAS
-            img.onerror = function() {
-                if (this.src.includes('.png')) {
-                    this.src = this.src.replace('.png', '.PNG');
-                }
-                // Limpiamos el error para que no entre en bucle infinito
-                this.onerror = null; 
-            };
-
-            const labels = ["CARDIO", "RUNNING", "FÚTBOL", "ESCALADA", "CICLISMO", "PESAS", "YOGA", "BASKET", "ARQUERÍA"];
+            img.src = `ex${currentEx}.png`;
+            const labels = ["NATACIÓN", "RUNNING", "FÚTBOL", "ESCALADA", "CICLISMO", "PESAS", "YOGA", "BASKET", "ARQUERÍA"];
             if(texto) texto.innerText = labels[currentEx - 1];
         }
 
         img.style.opacity = "1";
         img.style.transform = "scale(1)";
-    }, 1500);
+    }, 400);
+}
+
+// Mantenemos el intervalo de 3 segundos para que sea cómodo de leer
+if(!window.trainerInterval) {
+    window.trainerInterval = setInterval(rotarEntrenador, 1500);
 }
