@@ -234,10 +234,70 @@
         <p class="ex-mini-tag">(Agua)</p>
     </div>
      </div>    
-    
+
+<div id="exercise-widget-container" style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    height: 155px; /* Altura aumentada para legibilidad */
+    background: #0a101e; 
+    border-radius: 15px; 
+    border: 2px solid var(--chasis-color); 
+    box-shadow: 0 0 15px rgba(0, 209, 255, 0.3);
+    position: relative;
+    transform: scale(0.7);
+    overflow: hidden;
+    margin-top: -15px !important;
+    margin-bottom: -40px !important; /* Ajustado para compensar la nueva altura */
+">
+    <div style="position: relative; width: 150px; height: 135px; display: flex; align-items: center; justify-content: center;">
+        
+        <div class="halo-energia"></div>
+
+        <img id="img-entrenador" src="siluetadep.png" style="
+            width: 95px; /* Un toque más pequeña para que el texto no choque */
+            height: auto; 
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; 
+            filter: drop-shadow(0 0 8px var(--chasis-color));
+            z-index: 5;
+            opacity: 1;
+        ">
+    </div>
+
+    <p id="texto-ejercicio" style="
+        color: var(--chasis-color); 
+        font-weight: 900; 
+        font-size: 0.85rem; /* Texto ligeramente más grande */
+        letter-spacing: 2px; 
+        margin-top: 2px; 
+        margin-bottom: 8px; /* Espacio extra abajo */
+        text-transform: uppercase; 
+        z-index: 10;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    ">
+        FITUP CORE
+    </p>
+
+    <style>
+        @keyframes haloPulse {
+            0% { transform: scale(0.5); opacity: 0; border: 4px solid var(--chasis-color); }
+            50% { opacity: 0.5; }
+            100% { transform: scale(1.6); opacity: 0; border: 1px solid var(--chasis-color); }
+        }
+        .halo-energia {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            animation: haloPulse 2s infinite ease-out;
+            z-index: 1;
+        }
+    </style>
+</div>
     <div id="panel-rutinas" style="display: block !important; width: 100% !important; clear: both !important;">
-    </div>    
-    
+    </div>        
     <button onclick="iniciarRutina()" style="width:100%; padding:15px; background:#ffbe24; color:rgb(12, 12, 12); border:none; border-radius:10px; font-weight:bold; margin-top:20px;">
     INICIAR ENTRENAMIENTO
     </button>          

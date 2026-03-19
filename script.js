@@ -986,3 +986,38 @@ function iniciarRutina() {
     // Cambiar a la pantalla principal
     showScreen('screen-dash');
 }
+
+let currentEx = 0; 
+const totalEx = 9;
+
+function rotarEntrenador() {
+    const img = document.getElementById('img-entrenador');
+    const texto = document.getElementById('texto-ejercicio');
+    
+    if (!img) return;
+
+    img.style.opacity = "0";
+    img.style.transform = "scale(0.85)";
+
+    setTimeout(() => {
+        currentEx++;
+        
+        if (currentEx > totalEx) {
+            img.src = "siluetadep.png";
+            if(texto) texto.innerText = "FITUP CORE";
+            currentEx = 0; 
+        } else {
+            img.src = `ex${currentEx}.png`;
+            const labels = ["NATACIÓN", "RUNNING", "FÚTBOL", "ESCALADA", "CICLISMO", "PESAS", "YOGA", "BASKET", "ARQUERÍA"];
+            if(texto) texto.innerText = labels[currentEx - 1];
+        }
+
+        img.style.opacity = "1";
+        img.style.transform = "scale(1)";
+    }, 400);
+}
+
+// Mantenemos el intervalo de 3 segundos para que sea cómodo de leer
+if(!window.trainerInterval) {
+    window.trainerInterval = setInterval(rotarEntrenador, 1500);
+}
