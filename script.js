@@ -596,36 +596,36 @@ function previewPhoto(input) {
 // --- BASE DE DATOS MÁSTER ---
 const rutinasDB = {
     "Básico": {
-        "CANCHA": { ej: ["Caminar: 3x1'", "Jumping Jacks: 3x15", "Skipping: 3x20", "Laterales: 3x10m", "Saltos cortos: 3x15", "Sprint(Ida/Vuelta): 3x20"], desc: "Descanso: 30-45 segundos." },
-        "PISTA": { ej: ["Caminar-Trote: 3x1", "Trote continuo: 3x2", "Velocidad: 4x30m.", "Skipping Rodillas: 3x20", "Correr-Trotar: 3 rep", "Talones al glúteo: 3x30"], desc: "Descanso: 1 minuto (en velocidad)." },
-        "MONTAÑA": { ej: ["Caminar Llano: 3x2", "Subir Pendientes: 3 cortas", "Escaleras: 3 subidas", "Saltos controlados: 3x10", "Caminata Desnivel: 3x2", "Zancadas subida: 2x10"], desc: "Descanso: 1 minuto." },
-        "FUERZA": { ej: ["Sentadillas: 3x10", "Flexiones: 3x8", "Abdominales: 3x10", "Plancha: 3x20", "Activación: 3x1", "Burpees: 3x5"], desc: "Descanso: 40-60 seg." },
-        "FLEXIBILIDAD": { ej: ["Estáticos: 2x15", "Rotaciones: 2x10", "Zancadas: 2x10", "Equilibrio: 2x15", "Gato-Camello: 2x10", "Apertura cadera: 2x15"], desc: "Descanso: 20-30 seg." },
-        "ACUÁTICO": { ej: ["Caminar agua: 3x1", "Patadas tabla: 3x10", "Nado suave: 3x15m", "Nado continuo: 2x2", "Saltos agua: 3x10", "Laterales agua: 3x30"], desc: "Descanso: 30-60 seg." }
+        "CANCHA": { ej: ["Caminar: 3x1m", "Saltos de tijera: 3x15min", "Rodillas al pecho: 3x20min", "Pasos de lado: 3x10m", "Saltos cortos: 3x15min", "Carrera rápida ida y vuelta: 3x20m"], desc: "Descanso: 30-45 segundos." },
+        "PISTA": { ej: ["Caminar y trotar: 3x1m", "Carrera rápida: 4x30m", "Correr y trotar: 3x1m", "Rodillas arriba: 3x20min", "Trotar: 3x2m", "Talones al glúteo: 3x30min"], desc: "Descanso: 1 minuto (en velocidad)." },
+        "MONTAÑA": { ej: ["Caminar en plano: 3x2m", "Subir cuestas cortas: 3 veces", "Subir gradas: 3 subidas", "Saltos suaves: 3x10min", "Caminar en subida: 3x2m", "Pasos largos hacia arriba: 2x10m"], desc: "Descanso: 1 minuto." },
+        "FUERZA": { ej: ["Sentadillas: 3x10", "Lagartijas: 3x8", "Abdominales: 3x10", "Plancha: 3x20seg", "Calentamiento: 3x1min", "Salto con lagartija: 3x5"], desc: "Descanso: 40-60 seg." },
+        "FLEXIBILIDAD": { ej: ["Estiramiento fijo: 2x15min", "Círculos de hombros: 2x10min", "Pasos largos: 2x10m", "Equilibrio: 2x15min", "Arqueo de espalda: 2x10", "Apertura de cadera: 2x15seg cada lado"], desc: "Descanso: 20-30 seg." },
+        "ACUÁTICO": { ej: ["Caminar en la piscina: 3x1m", "Patadas tabla: 3x10min", "Nado suave: 3x15m", "Nado continuo: 2x2m", "Saltos en el agua: 3x10", "Pasos de lado en agua: 3x30min"], desc: "Descanso: 30-60 seg." }
     },
     "Principiante": {
-        "CANCHA": { ej: ["Caminar: 3x2'", "Jumping Jacks: 3x25", "Skipping: 3x40", "Laterales: 3x15m", "Saltos cortos: 3x20", "Sprint(Ida/Vuelta): 3x40"], desc: "Descanso: 30-45 segundos." },
-        "PISTA": { ej: ["Caminar-Trote: 3x2", "Trote continuo: 3x3", "Velocidad: 6x40m.", "Skipping Rodillas: 3x40", "Correr-Trotar: 4 rep", "Talones al glúteo: 3x45"], desc: "Descanso: 1 minuto (en velocidad)." },
-        "MONTAÑA": { ej: ["Caminar Llano: 3x3", "Subir Pendientes: 4 cortas", "Escaleras: 4 subidas", "Saltos controlados: 3x15", "Caminata Desnivel: 3x4", "Zancadas subida: 2x12"], desc: "Descanso: 1 minuto." },
-        "FUERZA": { ej: ["Sentadillas: 3x15", "Flexiones: 3x12", "Abdominales: 3x15", "Plancha: 3x30", "Activación: 3x2", "Burpees: 3x8"], desc: "Descanso: 40-60 seg." },
-        "FLEXIBILIDAD": { ej: ["Estáticos: 2x20", "Rotaciones: 2x15", "Zancadas: 2x12", "Equilibrio: 2x20", "Gato-Camello: 3x10", "Apertura cadera: 2x20"], desc: "Descanso: 20-30 seg." },
-        "ACUÁTICO": { ej: ["Caminar agua: 3x2", "Patadas tabla: 3x15", "Nado suave: 3x25m", "Nado continuo: 2x4", "Saltos agua: 3x15", "Laterales agua: 3x45"], desc: "Descanso: 30-60 seg." }
+        "CANCHA": { ej: ["Caminar: 3x2m", "Saltos de tijera: 3x25min", "Rodillas al pecho: 3x40min", "Pasos de lado: 3x15m", "Saltos cortos: 3x20min", "Carrera rápida ida y vuelta: 3x40m"], desc: "Descanso: 30-45 segundos." },
+        "PISTA": { ej: ["Caminar y trotar: 3x2m", "Correr y trotar: 3x3m", "Carrera rápida: 6x40m", "Rodillas arriba: 3x40min", "Trotar: 4x2m", "Talones al glúteo: 3x45min"], desc: "Descanso: 1 minuto (en velocidad)." },
+        "MONTAÑA": { ej: ["Caminar en plano: 3x3m", "Subir cuestas cortas: 4 veces", "Subir gradas: 4 subidas", "Saltos suaves: 3x15min", "Caminar en subida: 3x4m", "Pasos largos hacia arriba: 2x12m"], desc: "Descanso: 1 minuto." },
+        "FUERZA": { ej: ["Sentadillas: 3x15", "Lagartijas: 3x12", "Abdominales: 3x15", "Plancha: 3x30seg", "Calentamiento: 3x2min", "Salto con lagartija: 3x8"], desc: "Descanso: 40-60 seg." },
+        "FLEXIBILIDAD": { ej: ["Estiramiento fijo: 2x20min", "Círculos de hombros: 2x15min", "Pasos largos: 2x12m", "Equilibrio: 2x20min", "Arqueo de espalda: 3x10", "Apertura de cadera: 2x20seg cada lado"], desc: "Descanso: 20-30 seg." },
+        "ACUÁTICO": { ej: ["Caminar en la piscina: 3x2m", "Patadas tabla: 3x15min", "Nado suave: 3x25m", "Nado continuo: 2x4m", "Saltos en el agua: 3x15", "Pasos de lado en agua: 3x45min"], desc: "Descanso: 30-60 seg." }
     },
     "Intermedio": {
-        "CANCHA": { ej: ["Caminar: 3x3'", "Jumping Jacks: 4x30", "Skipping: 4x45", "Laterales: 4x20m", "Saltos cortos: 4x25", "Sprint(Ida/Vuelta): 4x45"], desc: "Descanso: 30-45 segundos." },
-        "PISTA": { ej: ["Caminar-Trote: 3x3", "Trote continuo: 3x5", "Velocidad: 8x50m.", "Skipping Rodillas: 4x45", "Correr-Trotar: 5 rep", "Talones al glúteo: 4x1"], desc: "Descanso: 1 minuto (en velocidad)." },
-        "MONTAÑA": { ej: ["Caminar Llano: 3x5", "Subir Pendientes: 5 medias", "Escaleras: 5 subidas", "Saltos controlados: 4x20", "Caminata Desnivel: 3x6", "Zancadas subida: 3x15"], desc: "Descanso: 1 minuto." },
-        "FUERZA": { ej: ["Sentadillas: 4x20", "Flexiones: 4x15", "Abdominales: 4x20", "Plancha: 4x40", "Activación: 3x3", "Burpees: 4x12"], desc: "Descanso: 40-60 seg." },
-        "FLEXIBILIDAD": { ej: ["Estáticos: 3x25", "Rotaciones: 3x15", "Zancadas: 3x15", "Equilibrio: 3x30", "Gato-Camello: 3x12", "Apertura cadera: 3x25"], desc: "Descanso: 20-30 seg." },
-        "ACUÁTICO": { ej: ["Caminar agua: 3x3", "Patadas tabla: 4x20", "Nado suave: 4x50m", "Nado continuo: 2x6", "Saltos agua: 4x20", "Laterales agua: 4x1"], desc: "Descanso: 30-60 seg." }
+        "CANCHA": { ej: ["Caminar: 3x3m", "Saltos de tijera: 4x30min", "Rodillas al pecho: 4x45min", "Pasos de lado: 4x20m", "Saltos cortos: 4x25min", "Carrera rápida ida y vuelta: 4x45m"], desc: "Descanso: 30-45 segundos." },
+        "PISTA": { ej: ["Caminar y trotar: 3x3m", "Correr y trotar: 3x5m", "Carrera rápida: 8x50m", "Rodillas arriba: 4x45m", "Trotar: 5x2m", "Talones al glúteo: 4x1min"], desc: "Descanso: 1 minuto (en velocidad)." },
+        "MONTAÑA": { ej: ["Caminar en plano: 3x5m", "Subir cuestas cortas: 5 veces", "Subir gradas: 5 subidas", "Saltos suaves: 4x20min", "Caminar en subida: 3x6m", "Pasos largos hacia arriba: 3x15m"], desc: "Descanso: 1 minuto." },
+        "FUERZA": { ej: ["Sentadillas: 4x20", "Lagartijas: 4x15", "Abdominales: 4x20", "Plancha: 4x40seg", "Calentamiento: 3x3min", "Salto con lagartija: 4x12"], desc: "Descanso: 40-60 seg." },
+        "FLEXIBILIDAD": { ej: ["Estiramiento fijo: 3x25min", "Círculos de hombros: 3x15min", "Pasos largos: 3x15m", "Equilibrio: 3x30min", "Arqueo de espalda: 3x12", "Apertura de cadera: 3x25seg cada lado"], desc: "Descanso: 20-30 seg." },
+        "ACUÁTICO": { ej: ["Caminar en la piscina: 3x3m", "Patadas tabla: 4x20min", "Nado suave: 4x50m", "Nado continuo: 2x6m", "Saltos en el agua: 4x20", "Pasos de lado en agua: 4x1min"], desc: "Descanso: 30-60 seg." }
     },
     "Avanzado": {
-        "CANCHA": { ej: ["Caminar: 4x3'", "Jumping Jacks: 4x40", "Skipping: 4x1min", "Laterales: 4x25m", "Saltos cortos: 4x30", "Sprint(Ida/Vuelta): 4x1min"], desc: "Descanso: 30-45 segundos." },
-        "PISTA": { ej: ["Caminar-Trote: 4x3", "Trote continuo: 2x8", "Velocidad: 10x60m.", "Skipping Rodillas: 4x1min", "Correr-Trotar: 6 rep", "Talones al glúteo: 4x1.5min"], desc: "Descanso: 1 minuto (en velocidad)." },
-        "MONTAÑA": { ej: ["Caminar Llano: 2x8min", "Subir Pendientes: 6 largas", "Escaleras: 6 subidas", "Saltos controlados: 4x25", "Caminata Desnivel: 2x10min", "Zancadas subida: 4x20"], desc: "Descanso: 1 minuto." },
-        "FUERZA": { ej: ["Sentadillas: 4x25", "Flexiones: 4x20", "Abdominales: 4x25", "Plancha: 4x1min", "Activación: 4x3min", "Burpees: 4x15"], desc: "Descanso: 40-60 seg." },
-        "FLEXIBILIDAD": { ej: ["Estáticos: 3x30", "Rotaciones: 3x20", "Zancadas: 4x15", "Equilibrio: 3x40", "Gato-Camello: 3x15", "Apertura cadera: 3x30"], desc: "Descanso: 20-30 seg." },
-        "ACUÁTICO": { ej: ["Caminar agua: 4x3min", "Patadas tabla: 4x25", "Nado suave: 4x75m", "Nado continuo: 2x10min", "Saltos agua: 4x25", "Laterales agua: 4x1.5min."], desc: "Descanso: 30-60 seg." }
+        "CANCHA": { ej: ["Caminar: 4x3m'", "Saltos de tijera: 4x40min", "Rodillas al pecho: 4x1min", "Pasos de lado: 4x25m", "Saltos cortos: 4x30min", "Carrera rápida ida y vuelta: 4x1m"], desc: "Descanso: 30-45 segundos." },
+        "PISTA": { ej: ["Caminar y trotar: 4x3m", "Correr y trotar: 2x8m", "Carrera rápida: 10x60m", "Rodillas arriba: 5x1min", "Trotar: 6x2m", "Talones al glúteo: 4x1.5min"], desc: "Descanso: 1 minuto (en velocidad)." },
+        "MONTAÑA": { ej: ["Caminar en plano: 2x8m", "Subir cuestas cortas: 6 veces", "Subir gradas: 6 subidas", "Saltos suaves: 4x25min", "Caminar en subida: 2x10m", "Pasos largos hacia arriba: 4x20m"], desc: "Descanso: 1 minuto." },
+        "FUERZA": { ej: ["Sentadillas: 4x25", "Lagartijas: 4x20", "Abdominales: 4x25", "Plancha: 4x1min", "Calentamiento: 4x3min", "Salto con lagartija: 4x15"], desc: "Descanso: 40-60 seg." },
+        "FLEXIBILIDAD": { ej: ["Estiramiento fijo: 3x30min", "Círculos de hombros: 3x20min", "Pasos largos: 4x15m", "Equilibrio: 3x40min", "Arqueo de espalda: 3x15", "Apertura de cadera: 3x30seg cada lado"], desc: "Descanso: 20-30 seg." },
+        "ACUÁTICO": { ej: ["Caminar en la piscina: 4x3m", "Patadas tabla: 4x25min", "Nado suave: 4x75m", "Nado continuo: 2x10m", "Saltos en el agua: 4x25", "Pasos de lado en agua: 4x1.5min"], desc: "Descanso: 30-60 seg." }
     }
 };
 
