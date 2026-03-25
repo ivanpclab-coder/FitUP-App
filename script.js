@@ -92,52 +92,106 @@ function actualizarWidgetEjercicios() {
     const countTxt = document.getElementById('dash-rutina-count');
     const msgFinal = document.getElementById('msg-finalizado');
     
-    // Seguridad: Si no encuentra los elementos en el HTML, detiene la función para no dar error
     if(!actVal || !listCont || !barra) return; 
 
-    // 1. Mostrar Actividad y Nivel Limpios (provenientes del objeto user)
+    // Diccionario de imágenes (Mismo que usamos en la selección)
+    const iconosRutinas = {
+    // --- CAMINATA / CARRERA ---
+    "Caminar": "CAMINAR o TROTAR__.png",
+    "Caminar en plano": "CAMINAR o TROTAR__.png",
+    "Caminar en subida": "CAMINAR EN SUBIDA.png",
+    "Caminar y trotar": "CAMINAR o TROTAR__.png",
+    "Trotar": "CAMINAR o TROTAR__.png",
+    "Correr y trotar": "CAMINAR o TROTAR__.png",
+    "Carrera rápida": "Carrera rápida.png",
+    "Carrera rápida ida y vuelta": "Carrera rápida.png",
+    "Velocidad": "VELOCIDAD.png",
+    
+    // --- SALTOS Y AGILIDAD ---
+    "Saltos de tijera": "SALTOS DE TIJERA.png",
+    "Saltos suaves": "SALTOS CORTOS.png", // Usamos cortos para suaves
+    "Saltos cortos": "SALTOS CORTOS.png",
+    "Pasos de lado": "Pasos de lado.png",
+    "Rodillas al pecho": "RODILLAS AL PECHO.png",
+    "Rodillas arriba": "RODILLAS AL PECHO.png",
+    "Talones al glúteo": "TALONES AL GLUTEO.png",
+
+    // --- FUERZA ---
+    "Sentadillas": "SENTADILLA.png",
+    "Lagartijas": "lagartijas.png",
+    "Abdominales": "ABDOMINALES.png",
+    "Plancha": "PLANCHA.png",
+    "Salto con lagartija": "SALTO CON LAGARTIJA.png",
+    "Calentamiento": "SALTOS DE TIJERA.png", // Imagen genérica de movimiento
+
+    // --- MONTAÑA ---
+    "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
+    "Subir gradas": "SUBIR GRADAS.png",
+    "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
+
+    // --- FLEXIBILIDAD ---
+    "Estiramiento fijo": "ESTIRAMIENTO FIJO.png",
+    "Círculos de hombros": "CIRCULOS DE HOMBROS.png",
+    "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
+    "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
+    "Apertura de cadera": "APERTURA DE CADERA.png",
+
+    // --- ACUÁTICO ---
+    "Burbujas": "BURBUJAS.png",
+    "Patadas tabla": "PATADAS TABLA.png",
+    "Nado suave": "NADO SUAVE O CONTINUO.png",
+    "Nado continuo": "NADO SUAVE O CONTINUO.png", // Nombre corregido
+    "Solo brazada": "BRAZADA.png"
+};
+
     actVal.innerText = (user.activity || "Bajo").toUpperCase();
     nivVal.innerText = (user.level || "Básico").toUpperCase();
 
-    // 2. Limpiar el contenedor de la lista antes de llenarlo
     listCont.innerHTML = "";
     let completados = 0;
 
-    // 3. Validar si hay rutinas seleccionadas
     if(!user.routines || user.routines.length === 0) {
         listCont.innerHTML = "<p style='font-size:0.7rem; color:#999; text-align:center;'>No hay rutinas activas.</p>";
-        barra.style.width = "0%";
-        countTxt.innerText = "0/0";
-        msgFinal.style.display = "none";
+        actualizarProgresoRutina(0, 0);
         return;
     }
 
-    // 4. Crear los elementos de la lista uno por uno
     user.routines.forEach((rutinaNombre, i) => {
         const div = document.createElement('div');
-        // Estilo de cada fila de ejercicio
+        
+        // Buscamos la imagen correspondiente
+       // Quitamos los ":" y también lo que esté entre paréntesis para encontrar la imagen
+        let nombreLimpio = rutinaNombre.split(':')[0].split('(')[0].trim();
+        
+        const rutaImagen = iconosRutinas[nombreLimpio];
+        const imgHTML = rutaImagen 
+            ? `<img src="${rutaImagen}" style="width:35px; height:35px; border-radius:8px; object-fit:cover; margin-right:10px; border:1px solid #AABFC1;">`
+            : `<div style="width:35px; margin-right:10px;"></div>`;
+
         div.style = `
             background: white; 
-            padding: 12px; 
+            padding: 10px; 
             border-radius: 12px; 
             border: 1px solid #AABFC1; 
-            font-size: 0.8rem; 
+            font-size: 0.75rem; 
             font-weight: 800; 
             cursor: pointer; 
             display: flex; 
-            justify-content: space-between; 
             align-items: center;
+            margin-bottom: 8px;
             transition: 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         `;
         
-        div.innerHTML = `<span>${rutinaNombre}</span> <span class="status-icon">⭕</span>`;
+        div.innerHTML = `
+            ${imgHTML}
+            <span style="flex:1;">${rutinaNombre}</span> 
+            <span class="status-icon">⭕</span>
+        `;
         
-        // Evento al hacer clic en el ejercicio (Marcar como completado)
         div.onclick = function() {
             if(!this.dataset.done) {
-                this.dataset.done = "true"; // Marcador interno
-                this.style.background = "#E0F7FA"; // Color cian clarito
+                this.dataset.done = "true";
+                this.style.background = "#E0F7FA"; 
                 this.style.borderColor = "#00D1FF";
                 this.style.opacity = "0.7";
                 this.querySelector('span').style.textDecoration = "line-through";
@@ -147,26 +201,23 @@ function actualizarWidgetEjercicios() {
                 actualizarProgresoRutina(completados, user.routines.length);
             }
         };
-        
-
-
         listCont.appendChild(div);
     });
 
-    // 5. Función interna para mover la barra y mostrar el mensaje final
     function actualizarProgresoRutina(done, total) {
-        const porcentaje = (done / total) * 100;
+        const porcentaje = total > 0 ? (done / total) * 100 : 0;
         barra.style.width = porcentaje + "%";
         countTxt.innerText = `${done}/${total}`;
         
-        if(done === total) {
+        if(total > 0 && done === total) {
             msgFinal.style.display = "block";
-            // Efecto visual de éxito en la barra
             barra.style.background = "linear-gradient(90deg, #00D1FF, #00FF88)";
+        } else {
+            msgFinal.style.display = "none";
+            barra.style.background = "var(--cian)";
         }
     }
 
-    // Reset inicial de la barra y contador al cargar la pantalla
     actualizarProgresoRutina(0, user.routines.length);
 }
 
@@ -650,27 +701,74 @@ function selectEx(el, categoryName) {
         else if (txt.includes("Avanzado")) nivelActual = "Avanzado";
     }
 
+    // --- DICCIONARIO DE IMÁGENES IVANBOTEC ---
+    const iconosRutinas = {
+        "Caminar": "CAMINAR o TROTAR__.png",
+        "Caminar en plano": "CAMINAR o TROTAR__.png",
+        "Caminar en subida": "CAMINAR EN SUBIDA.png",
+        "Caminar y trotar": "CAMINAR o TROTAR__.png",
+        "Trotar": "CAMINAR o TROTAR__.png",
+        "Correr y trotar": "CAMINAR o TROTAR__.png",
+        "Carrera rápida": "Carrera rápida.jpg",
+        "Carrera rápida ida y vuelta": "Carrera rápida.jpg",
+        "Velocidad": "VELOCIDAD.png",
+        "Saltos de tijera": "SALTOS DE TIJERA.jpg",
+        "Rodillas al pecho": "RODILLAS AL PECHO.png",
+        "Rodillas arriba": "RODILLAS AL PECHO.png",
+        "Talones al glúteo": "TALONES AL GLUTEO.png",
+        "Pasos de lado": "Pasos de lado.jpg",
+        "Saltos cortos": "SALTOS CORTOS.png",
+        "Zancadas": "ZANCADASjpeg.png",
+        "Pasos largos": "ZANCADASjpeg.png",
+        "Sentadillas": "SENTADILLA.png",
+        "Lagartijas": "lagartijas.png",
+        "Abdominales": "ABDOMINALES.png",
+        "Plancha": "PLANCHA.png",
+        "Salto con lagartija": "SALTO CON LAGARTIJA.png",
+        "Subir cuestas cortas (completas)": "SUBIR CUESTAS CORTAS.png",
+        "Subir gradas (completas)": "SUBIR GRADAS.png",
+        "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
+        "Estiramiento fijo": "ESTIRAMIENTO FIJO.jpg",
+        "Círculos de hombros": "CIRCULOS DE HOMBROS.jpg",
+        "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
+        "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
+        "Apertura de cadera": "APERTURA DE CADERA.png",
+        "Burbujas": "BURBUJAS.png",
+        "Patadas tabla": "PATADAS TABLA.png",
+        "Nado suave": "NADO SUAVE O CONTINUO.png",
+        "Solo brazada": "BRAZADA.png"
+    };
+
     // 3. Buscar datos en la DB
     const cat = categoryName.toUpperCase();
     const data = rutinasDB[nivelActual] ? rutinasDB[nivelActual][cat] : null;
 
     if (data) {
-        // 4. Generar HTML en LISTA VERTICAL (Sin Grid)
         let html = `<h3 style="text-align:center; color:#0055ff; margin:15px 0; font-size:1.1rem;">Seleccione las rutinas</h3>`;
-        
-        // Contenedor principal en bloque para evitar columnas
         html += `<div id="lista-rutinas-vertical" style="display: block !important; width: 100%;">`;
         
-        data.ej.forEach((item, index) => {
-            // Creamos cada opción como una fila completa
+        data.ej.forEach((item) => {
+            // Extraer nombre para buscar la imagen
+            const nombreLimpio = item.split(':')[0].trim();
+            const rutaImagen = iconosRutinas[nombreLimpio];
+
+            // Crear el HTML de la imagen (o un espacio vacío si no existe)
+            const imgHTML = rutaImagen 
+                ? `<img src="${rutaImagen}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; border:1px solid #00D1FF; margin-right:12px; background:white;">` 
+                : `<div style="width:40px; margin-right:12px;"></div>`;
+
             html += `
                 <div class="rutina-fila" 
                      onclick="toggleRutinaCheck(this)" 
-                     style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #cceeff; cursor: pointer; transition: 0.2s;">
+                     style="display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #cceeff; cursor: pointer; transition: 0.2s;">
                     
-                    <span style="font-weight: bold; color: #102A2D; font-size: 0.95rem;">${item}</span>
+                    ${imgHTML}
+
+                    <div style="flex: 1;">
+                        <span style="font-weight: bold; color: #102A2D; font-size: 0.85rem;">${item}</span>
+                    </div>
                     
-                    <div class="check-indicador" style="width: 24px; height: 24px; border: 2px solid #00D1FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: transparent; font-weight: bold;">
+                    <div class="check-indicador" style="width: 24px; height: 24px; border: 2px solid #00D1FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: transparent; font-weight: bold; flex-shrink:0;">
                         ✓
                     </div>
                     
@@ -679,8 +777,6 @@ function selectEx(el, categoryName) {
         });
         
         html += `</div>`;
-        
-        // Cuadro de descanso
         html += `<div style="margin-top:20px; padding:12px; background:#fff3e0; color:#e65100; font-weight:bold; border-radius:10px; text-align:center; border:1px solid #ffe0b2; font-size: 0.85rem;">
                     ⏱️ ${data.desc}
                 </div>`;
@@ -691,7 +787,7 @@ function selectEx(el, categoryName) {
         panel.innerHTML = `<p style="text-align:center; color:red;">No se encontraron ejercicios</p>`;
     }
     
-    validateSelections();
+    if(typeof validateSelections === 'function') validateSelections();
 }
 
 // Función auxiliar para manejar la selección visual y el checkbox oculto
