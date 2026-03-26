@@ -122,11 +122,12 @@ function actualizarWidgetEjercicios() {
         "Calentamiento": "calentamiento.png",
         "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
         "Subir gradas": "SUBIR GRADAS.png",
-        "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
+        "Pasos largos hacia arriba": "PASOSLARGOSARRIBA.png",
         "Estiramiento fijo": "estiramiento_fijo.png",
         "Círculos de hombros": "circulo_de_hombros.png",
         "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
         "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
+        "Pasos largos": "PasosLargosFlexi.png",
         "Apertura de cadera": "APERTURA DE CADERA.png",
         "Burbujas": "BURBUJAS.png",
         "Patadas tabla": "PATADAS TABLA.png",
@@ -742,11 +743,12 @@ function selectEx(el, categoryName) {
         // --- MONTAÑA ---
         "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
         "Subir gradas": "SUBIR GRADAS.png",
-        "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
+        "Pasos largos hacia arriba": "PASOSLARGOSARRIBA.png",
 
         // --- FLEXIBILIDAD ---
         "Estiramiento fijo": "estiramiento_fijo.png",
         "Círculos de hombros": "circulo_de_hombros.png",
+        "Pasos largos": "PasosLargosFlexi.png",
         "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
         "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
         "Apertura de cadera": "APERTURA DE CADERA.png",
