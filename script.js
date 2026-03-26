@@ -27,6 +27,8 @@ const temas = {
     
 };
 
+
+
 const color = temas[id] || '#00d1ff';
 
 if(container) {
@@ -94,55 +96,44 @@ function actualizarWidgetEjercicios() {
     
     if(!actVal || !listCont || !barra) return; 
 
-    // Diccionario de imágenes (Mismo que usamos en la selección)
+    // --- DICCIONARIO UNIFICADO (Nombres exactos .png) ---
     const iconosRutinas = {
-    // --- CAMINATA / CARRERA ---
-    "Caminar": "CAMINAR o TROTAR__.png",
-    "Caminar en plano": "CAMINAR o TROTAR__.png",
-    "Caminar en subida": "CAMINAR EN SUBIDA.png",
-    "Caminar y trotar": "CAMINAR o TROTAR__.png",
-    "Trotar": "CAMINAR o TROTAR__.png",
-    "Correr y trotar": "CAMINAR o TROTAR__.png",
-    "Carrera rápida": "Carrera rápida.png",
-    "Carrera rápida ida y vuelta": "Carrera rápida.png",
-    "Velocidad": "VELOCIDAD.png",
-    
-    // --- SALTOS Y AGILIDAD ---
-    "Saltos de tijera": "SALTOS DE TIJERA.png",
-    "Saltos suaves": "SALTOS CORTOS.png", // Usamos cortos para suaves
-    "Saltos cortos": "SALTOS CORTOS.png",
-    "Pasos de lado": "Pasos de lado.png",
-    "Rodillas al pecho": "RODILLAS AL PECHO.png",
-    "Rodillas arriba": "RODILLAS AL PECHO.png",
-    "Talones al glúteo": "TALONES AL GLUTEO.png",
-
-    // --- FUERZA ---
-    "Sentadillas": "SENTADILLA.png",
-    "Lagartijas": "lagartijas.png",
-    "Abdominales": "ABDOMINALES.png",
-    "Plancha": "PLANCHA.png",
-    "Salto con lagartija": "SALTO CON LAGARTIJA.png",
-    "Calentamiento": "SALTOS DE TIJERA.png", // Imagen genérica de movimiento
-
-    // --- MONTAÑA ---
-    "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
-    "Subir gradas": "SUBIR GRADAS.png",
-    "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
-
-    // --- FLEXIBILIDAD ---
-    "Estiramiento fijo": "ESTIRAMIENTO FIJO.png",
-    "Círculos de hombros": "CIRCULOS DE HOMBROS.png",
-    "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
-    "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
-    "Apertura de cadera": "APERTURA DE CADERA.png",
-
-    // --- ACUÁTICO ---
-    "Burbujas": "BURBUJAS.png",
-    "Patadas tabla": "PATADAS TABLA.png",
-    "Nado suave": "NADO SUAVE O CONTINUO.png",
-    "Nado continuo": "NADO SUAVE O CONTINUO.png", // Nombre corregido
-    "Solo brazada": "BRAZADA.png"
-};
+        "Caminar": "CAMINAR o TROTAR__.png",
+        "Caminar en plano": "CAMINAR o TROTAR__.png",
+        "Caminar en subida": "CAMINAR EN SUBIDA.png",
+        "Caminar y trotar": "CAMINAR o TROTAR__.png",
+        "Trotar": "CAMINAR o TROTAR__.png",
+        "Correr y trotar": "CAMINAR o TROTAR__.png",
+        "Carrera rápida": "carrera_rápida.png",
+        "Carrera rápida ida y vuelta": "carrera_rápida_ida_y_vuelta.png",
+        "Velocidad": "VELOCIDAD.png",
+        "Saltos de tijera": "saltos_de_tijera.png",
+        "Saltos suaves": "saltos_suaves.png",
+        "Saltos cortos": "SALTOS CORTOS.png",
+        "Pasos de lado": "pasos_de_lado.png",
+        "Rodillas al pecho": "RODILLAS AL PECHO.png",
+        "Rodillas arriba": "RODILLAS AL PECHO.png",
+        "Talones al glúteo": "TALONES AL GLUTEO.png",
+        "Sentadillas": "SENTADILLA.png",
+        "Lagartijas": "lagartijas.png",
+        "Abdominales": "ABDOMINALES.png",
+        "Plancha": "PLANCHA.png",
+        "Salto con lagartija": "SALTO CON LAGARTIJA.png",
+        "Calentamiento": "calentamiento.png",
+        "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
+        "Subir gradas": "SUBIR GRADAS.png",
+        "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
+        "Estiramiento fijo": "estiramiento_fijo.png",
+        "Círculos de hombros": "circulo_de_hombros.png",
+        "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
+        "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
+        "Apertura de cadera": "APERTURA DE CADERA.png",
+        "Burbujas": "BURBUJAS.png",
+        "Patadas tabla": "PATADAS TABLA.png",
+        "Nado suave": "NADO SUAVE O CONTINUO.png",
+        "Nado continuo": "nado_continuo.png",
+        "Solo brazada": "BRAZADA.png"
+    };
 
     actVal.innerText = (user.activity || "Bajo").toUpperCase();
     nivVal.innerText = (user.level || "Básico").toUpperCase();
@@ -159,15 +150,16 @@ function actualizarWidgetEjercicios() {
     user.routines.forEach((rutinaNombre, i) => {
         const div = document.createElement('div');
         
-        // Buscamos la imagen correspondiente
-       // Quitamos los ":" y también lo que esté entre paréntesis para encontrar la imagen
-        let nombreLimpio = rutinaNombre.split(':')[0].split('(')[0].trim();
-        
+        // --- LÓGICA DE BÚSQUEDA DE IMAGEN ---
+        // Extraemos el nombre antes de los ":" y antes de cualquier "("
+        const nombreLimpio = rutinaNombre.split(':')[0].split('(')[0].trim();
         const rutaImagen = iconosRutinas[nombreLimpio];
-        const imgHTML = rutaImagen 
-            ? `<img src="${rutaImagen}" style="width:35px; height:35px; border-radius:8px; object-fit:cover; margin-right:10px; border:1px solid #AABFC1;">`
-            : `<div style="width:35px; margin-right:10px;"></div>`;
 
+        const imgHTML = rutaImagen 
+            ? `<img src="${rutaImagen}" style="width:35px; height:35px; border-radius:8px; object-fit:cover; margin-right:12px; border:1px solid #00D1FF; background:white;">`
+            : `<div style="width:35px; margin-right:12px;"></div>`;
+
+        div.className = "rutina-item-dash";
         div.style = `
             background: white; 
             padding: 10px; 
@@ -210,10 +202,10 @@ function actualizarWidgetEjercicios() {
         countTxt.innerText = `${done}/${total}`;
         
         if(total > 0 && done === total) {
-            msgFinal.style.display = "block";
+            if(msgFinal) msgFinal.style.display = "block";
             barra.style.background = "linear-gradient(90deg, #00D1FF, #00FF88)";
         } else {
-            msgFinal.style.display = "none";
+            if(msgFinal) msgFinal.style.display = "none";
             barra.style.background = "var(--cian)";
         }
     }
@@ -458,7 +450,7 @@ function renderHidratacion() {
     
     // 3. Llenado visual de la botella
     
-
+    
 
     const porcentaje = Math.round((user.current / user.goal) * 100) || 0;
     
@@ -469,7 +461,19 @@ function renderHidratacion() {
     if (liquid) liquid.style.height = Math.min(100, porcentaje) + "%";
     if (text) text.innerText = porcentaje + "%";
 
-   
+   // Localiza donde se genera el HTML de la hidratación y usa esto:
+let htmlHidratacion = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent !important; border: none !important; box-shadow: none !important;">
+        <img src="boteverde.png" alt="Botellas" 
+             style="width: 120px; 
+                    height: auto; 
+                    display: block; 
+                    margin: 0 auto; 
+                    filter: none !important; 
+                    background: transparent !important; 
+                    border: none !important;">
+    </div>
+`;
 }
 
 // Función para sumar 500ml
@@ -683,6 +687,9 @@ const rutinasDB = {
 
 
 // --- FUNCIÓN PRINCIPAL ---
+// --- FUNCIÓN PRINCIPAL ---
+// --- FUNCIÓN PRINCIPAL ---
+// --- FUNCIÓN PRINCIPAL ---
 function selectEx(el, categoryName) {
     // 1. Resaltar selección visual de la categoría
     user.selectedEx = categoryName;
@@ -701,41 +708,54 @@ function selectEx(el, categoryName) {
         else if (txt.includes("Avanzado")) nivelActual = "Avanzado";
     }
 
-    // --- DICCIONARIO DE IMÁGENES IVANBOTEC ---
+    // --- DICCIONARIO DE IMÁGENES CORREGIDO CON NOMBRES EXACTOS ---
+    // --- DICCIONARIO DE IMÁGENES CORREGIDO (TODOS .PNG) ---
     const iconosRutinas = {
+        // --- CARRERA Y CAMINATA ---
         "Caminar": "CAMINAR o TROTAR__.png",
         "Caminar en plano": "CAMINAR o TROTAR__.png",
         "Caminar en subida": "CAMINAR EN SUBIDA.png",
         "Caminar y trotar": "CAMINAR o TROTAR__.png",
         "Trotar": "CAMINAR o TROTAR__.png",
         "Correr y trotar": "CAMINAR o TROTAR__.png",
-        "Carrera rápida": "Carrera rápida.jpg",
-        "Carrera rápida ida y vuelta": "Carrera rápida.jpg",
+        "Carrera rápida": "carrera_rápida.png",
+        "Carrera rápida ida y vuelta": "carrera_rápida_ida_y_vuelta.png",
         "Velocidad": "VELOCIDAD.png",
-        "Saltos de tijera": "SALTOS DE TIJERA.jpg",
+        
+        // --- SALTOS Y AGILIDAD ---
+        "Saltos de tijera": "saltos_de_tijera.png",
+        "Saltos suaves": "saltos_suaves.png",
+        "Saltos cortos": "SALTOS CORTOS.png",
+        "Pasos de lado": "pasos_de_lado.png",
         "Rodillas al pecho": "RODILLAS AL PECHO.png",
         "Rodillas arriba": "RODILLAS AL PECHO.png",
         "Talones al glúteo": "TALONES AL GLUTEO.png",
-        "Pasos de lado": "Pasos de lado.jpg",
-        "Saltos cortos": "SALTOS CORTOS.png",
-        "Zancadas": "ZANCADASjpeg.png",
-        "Pasos largos": "ZANCADASjpeg.png",
+
+        // --- FUERZA Y CALENTAMIENTO ---
         "Sentadillas": "SENTADILLA.png",
         "Lagartijas": "lagartijas.png",
         "Abdominales": "ABDOMINALES.png",
         "Plancha": "PLANCHA.png",
         "Salto con lagartija": "SALTO CON LAGARTIJA.png",
-        "Subir cuestas cortas (completas)": "SUBIR CUESTAS CORTAS.png",
-        "Subir gradas (completas)": "SUBIR GRADAS.png",
+        "Calentamiento": "calentamiento.png",
+
+        // --- MONTAÑA ---
+        "Subir cuestas cortas": "SUBIR CUESTAS CORTAS.png",
+        "Subir gradas": "SUBIR GRADAS.png",
         "Pasos largos hacia arriba": "PASOS LARGOS HACIA ARRIBAeg.png",
-        "Estiramiento fijo": "ESTIRAMIENTO FIJO.jpg",
-        "Círculos de hombros": "CIRCULOS DE HOMBROS.jpg",
+
+        // --- FLEXIBILIDAD ---
+        "Estiramiento fijo": "estiramiento_fijo.png",
+        "Círculos de hombros": "circulo_de_hombros.png",
         "Equilibrio en un pie": "EQUILIBRIO EN UN PIE.png",
         "Arqueo de espalda": "ARQUEO DE ESPALDA.png",
         "Apertura de cadera": "APERTURA DE CADERA.png",
+
+        // --- ACUÁTICO ---
         "Burbujas": "BURBUJAS.png",
         "Patadas tabla": "PATADAS TABLA.png",
         "Nado suave": "NADO SUAVE O CONTINUO.png",
+        "Nado continuo": "nado_continuo.png",
         "Solo brazada": "BRAZADA.png"
     };
 
@@ -745,16 +765,18 @@ function selectEx(el, categoryName) {
 
     if (data) {
         let html = `<h3 style="text-align:center; color:#0055ff; margin:15px 0; font-size:1.1rem;">Seleccione las rutinas</h3>`;
+        
         html += `<div id="lista-rutinas-vertical" style="display: block !important; width: 100%;">`;
         
         data.ej.forEach((item) => {
-            // Extraer nombre para buscar la imagen
-            const nombreLimpio = item.split(':')[0].trim();
+            // --- LÓGICA DE BÚSQUEDA CORREGIDA ---
+            // Quitamos los ":" y también lo que esté entre paréntesis para encontrar la imagen
+            const nombreLimpio = item.split(':')[0].split('(')[0].trim();
             const rutaImagen = iconosRutinas[nombreLimpio];
 
-            // Crear el HTML de la imagen (o un espacio vacío si no existe)
+            // Crear el HTML de la imagen
             const imgHTML = rutaImagen 
-                ? `<img src="${rutaImagen}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; border:1px solid #00D1FF; margin-right:12px; background:white;">` 
+                ? `<img src="${rutaImagen}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; border:1px solid #00D1FF; margin-right:12px; background:white; flex-shrink:0;">` 
                 : `<div style="width:40px; margin-right:12px;"></div>`;
 
             html += `
@@ -777,6 +799,8 @@ function selectEx(el, categoryName) {
         });
         
         html += `</div>`;
+        
+        // Cuadro de descanso
         html += `<div style="margin-top:20px; padding:12px; background:#fff3e0; color:#e65100; font-weight:bold; border-radius:10px; text-align:center; border:1px solid #ffe0b2; font-size: 0.85rem;">
                     ⏱️ ${data.desc}
                 </div>`;
@@ -1090,6 +1114,9 @@ function rotarEntrenador() {
     const img = document.getElementById('img-entrenador');
     const texto = document.getElementById('texto-ejercicio');
     
+    // Cambiamos el total a 8 para excluir ex9.png (Arqueria)
+    const totalEx = 8; 
+
     if (!img) return;
 
     img.style.opacity = "0";
@@ -1098,21 +1125,27 @@ function rotarEntrenador() {
     setTimeout(() => {
         currentEx++;
         
+        // Si el contador pasa de 8, vuelve a la silueta inicial
         if (currentEx > totalEx) {
             img.src = "siluetadep.png";
             if(texto) texto.innerText = "FITUP CORE";
             currentEx = 0; 
         } else {
+            // Carga solo de ex1.png a ex8.png
             img.src = `ex${currentEx}.png`;
-            const labels = ["NATACIÓN", "RUNNING", "FÚTBOL", "ESCALADA", "CICLISMO", "PESAS", "YOGA", "BASKET", "ARQUERÍA"];
-            if(texto) texto.innerText = labels[currentEx - 1];
+            
+            // Lista de 8 etiquetas que coinciden con tus 8 imágenes
+            const labels = ["NATACIÓN", "RUNNING", "FÚTBOL", "ESCALADA", "CICLISMO", "PESAS", "YOGA", "BASKET"];
+            
+            if(texto && labels[currentEx - 1]) {
+                texto.innerText = labels[currentEx - 1];
+            }
         }
 
         img.style.opacity = "1";
         img.style.transform = "scale(1)";
     }, 400);
 }
-
 // Mantenemos el intervalo de 3 segundos para que sea cómodo de leer
 if(!window.trainerInterval) {
     window.trainerInterval = setInterval(rotarEntrenador, 1500);
