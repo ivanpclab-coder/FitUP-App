@@ -2,7 +2,7 @@
   "name": "FitUP - Smart Hydration Pro",
   "short_name": "FitUP",
   "description": "Botella inteligente de hidratación FitUP by Jahibé Labs",
-  "start_url": "./index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0f19",
   "theme_color": "#00D1FF",

@@ -1,23 +1,23 @@
 // FitUP Service Worker v1.0.1
-const CACHE_NAME = 'fitup-cache-v1';
+const CACHE_NAME = 'fitup-cache-v2';
 
 const ASSETS = [
-  './',
-  './index.html',
-  './style.css',
-  './script.js',
-  './manifest.json',
-  './fitUP.png',
-  './gotalegre.png',
-  './boteazul.png',
-  './boteroja.png',
-  './botenegra.png',
-  './engranaje.png',
-  './youtube.png',
-  './instagram.png',
-  './facebook.png',
-  './tiktok.png'
+  '/',
+  '/style.css',
+  '/script.js',
+  '/manifest.json',
+  '/fitUP.png',
+  '/gotalegre.png',
+  '/boteazul.png',
+  '/boteroja.png',
+  '/botenegra.png',
+  '/engranaje.png',
+  '/youtube.png',
+  '/instagram.png',
+  '/facebook.png',
+  '/tiktok.png'
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
