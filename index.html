@@ -13,25 +13,74 @@
     <link rel="stylesheet" href="style.css?v=99">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 
-
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00D1FF">
 </head>
 <body>
 
-    
+<!-- ══════════════════════════════════════════════════ -->
+<!--  PANTALLA DE LOGIN CON CÓDIGO DE BOTELLA          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="screen-login">
+    <div class="login-bg-glow"></div>
+    <div class="login-wrapper">
 
-<div id="screen-lock" style="position: fixed; top:0; left:0; width:100%; height:100%; background:#0a0f19; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-    <img src="gotaclave.png" alt="Seguridad" style="width: 160px; height: auto; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));">
-    <h2 style="color:var(--cian); letter-spacing:3px;">ACCESO RESTRINGIDO</h2>
-    <p style="color:#777; font-size:1rem; margin-bottom:10px; font-weight: bold;">
-    INGRESA TU CÓDIGO DE ACTIVACIÓN
-</p>
-    
-    <input type="text" id="input-codigo" placeholder="CÓDIGO-XXXX" style="background:rgba(255,255,255,0.05); border:1px solid var(--cian); color:white; padding:15px; border-radius:12px; width:80%; text-align:center; font-size:1.2rem; outline:none; box-shadow:0 0 15px rgba(0,209,255,0.2);">
-   
-    <button onclick="validarAcceso()" class="btn-main">ACTIVAR APLICACIÓN FITUP</button>
-   
-    <p id="error-msg" style="color:var(--orange-neon); font-size:0.7rem; margin-top:15px; display:none;">CÓDIGO NO VÁLIDO. CONTACTA A TU VENDEDOR.</p>
+        <!-- Logo -->
+        <div class="login-logo-area">
+            <img src="gotaclave.png" alt="FitUP" class="login-logo-img">
+            <h1 class="login-brand">FitUP</h1>
+            <p class="login-tagline">Hidratación Inteligente</p>
+        </div>
+
+        <!-- Tarjeta -->
+        <div class="login-card">
+            <div class="login-icon-drop">💧</div>
+            <h2 class="login-title">Activa tu Botella</h2>
+            <p class="login-subtitle">Ingresa tu código de 4 dígitos</p>
+
+            <!-- Display 3 dígitos -->
+            <div class="login-code-display" id="login-display">
+    <span class="code-char" id="c0">_</span>
+    <span class="code-char" id="c1">_</span>
+    <span class="code-char" id="c2">_</span>
 </div>
+
+            <!-- Mensaje estado -->
+            <div id="login-msg" class="login-msg" style="display:none;"></div>
+
+            <!-- Teclado -->
+            <div class="login-keypad">
+    <!-- Fila especial: botón F grande arriba -->
+    <button class="key-btn key-letra" onclick="loginKey('F')" style="grid-column: span 3;">
+        F
+    </button>
+    <!-- Números -->
+    <button class="key-btn" onclick="loginKey('1')">1</button>
+    <button class="key-btn" onclick="loginKey('2')">2</button>
+    <button class="key-btn" onclick="loginKey('3')">3</button>
+    <button class="key-btn" onclick="loginKey('4')">4</button>
+    <button class="key-btn" onclick="loginKey('5')">5</button>
+    <button class="key-btn" onclick="loginKey('6')">6</button>
+    <button class="key-btn" onclick="loginKey('7')">7</button>
+    <button class="key-btn" onclick="loginKey('8')">8</button>
+    <button class="key-btn" onclick="loginKey('9')">9</button>
+    <button class="key-btn key-clear" onclick="loginClear()">⌫</button>
+    <button class="key-btn" onclick="loginKey('0')">0</button>
+    <button class="key-btn key-enter" onclick="loginVerificar()" id="btn-login-enter">✓</button>
+</div>
+
+            <!-- Loader -->
+            <div id="login-loader" style="display:none; text-align:center; margin-top:10px;">
+                <div class="login-spinner"></div>
+                <p style="font-size:0.7rem; color:#00D1FF; font-weight:700; margin-top:6px;">Verificando...</p>
+            </div>
+        </div>
+
+        <p class="login-footer">🔒 Cada código activa una sola botella</p>
+    </div>
+</div>
+<!-- ══════════════════════════════════════════════════ -->    
+
 
 
 
@@ -45,46 +94,56 @@
     </div>    
 
     
-    <div id="screen-access" class="screen active" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh;">   
-    <div class="logo-container">
+<div id="screen-access" class="screen" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; padding: 20px;">
+
+    <div style="width:100%; display:flex; justify-content:center; align-items:center;">
         <img src="fitUP.png" 
-     alt="FitUp Logo" 
-     style="filter: none !important; 
-            box-shadow: none !important; 
-            border: none !important; 
-            outline: none !important; 
-            background: transparent !important;
-            display: block;
-            margin: 0 auto 30px auto;
-            max-width: 120px;">
+             alt="FitUp Logo" 
+             style="filter: none !important; 
+                    box-shadow: none !important; 
+                    border: none !important; 
+                    outline: none !important; 
+                    background: transparent !important;
+                    display: block;
+                    margin: 0 auto 30px auto;
+                    max-width: 120px;">
     </div>
-    <h1 class="welcome-text">¡Bienvenido!</h1>
-    <p class="slogan-text">Hidratación inteligente. Vida inteligente</p>
-    
-    <div class="glass-card" style="width: 80%; margin-top: 20px; min-height: 60px; position: relative;">
-    <div style="width: 80%; margin-top: 5px; position: relative; border: none !important; background: none !important;"></div>
-        
-        <button id="btn-sync" class="btn-main" onclick="startLoading()">Sincronizar tu FitUP</button>
-        
-        <div id="loading-area" style="display:none; margin-top: 15px;">
-            <div class="loader-widget">
+
+    <h1 class="welcome-text" style="text-align:center; width:100%;">¡Bienvenido!</h1>
+    <p class="slogan-text" style="text-align:center; width:100%;">Hidratación inteligente. Vida inteligente</p>
+
+    <div class="glass-card" style="width: 90%; margin-top: 20px; min-height: 60px; display:flex; flex-direction:column; align-items:center;">
+
+        <button id="btn-instalar" class="btn-main" onclick="instalarApp()"
+                style="width: 100%; margin-bottom: 12px; text-align:center;">
+            📲 Instalar FitUP en el dispositivo
+        </button>
+
+        <button id="btn-vincular" class="btn-main" onclick="startLoading()"
+                disabled
+                style="width: 100%; text-align:center; opacity: 0.3; pointer-events: none;">
+            Sincronizar tu FitUP
+        </button>
+
+        <div id="loading-area" style="display:none; margin-top: 15px; width:100%; text-align:center;">
+            <div class="loader-widget" style="display:flex; justify-content:center;">
                 <div class="spinner-modern"></div>
                 <img src="gotalegre.png" class="mini-drop-loader">
             </div>
-            <p class="loading-msg">Conectando con tu botella inteligente...</p>
+            <p class="loading-msg" style="text-align:center;">Conectando con tu botella inteligente...</p>
             <div class="progress-container">
                 <div id="bar" class="progress-bar"></div>
             </div>
-            <div style="display: flex; justify-content: center; margin-top: 15px;">
-        <img src="boteazul.png" alt="Botella" style="max-width: 100px; height: auto;">
-        <p style="color: #1f1e1e; font-size: 0.8rem; margin-top: 15px;">
-            v1.0.1 - Jahibé Labs
-        </p>
-    </div>
+            <div style="display: flex; justify-content: center; align-items:center; margin-top: 15px; gap:10px;">
+                <img src="boteazul.png" alt="Botella" style="max-width: 100px; height: auto;">
+                <p style="color: #1f1e1e; font-size: 0.8rem;">
+                    v1.0.1 - Jahibé Labs
+                </p>
+            </div>
         </div>
+
     </div>
-    
-    </div>
+</div>
 
     <div id="screen-config" class="screen" style="padding: 3px;">
     
@@ -375,6 +434,7 @@
 
 <div style="text-align: center; background: transparent;">
     <img src="boteverde.png" alt="Botellas" style="width: 100px; height: auto; background: transparent; border: none;">
+    <img src="botenegra.png" alt="Botellas" style="width: 100px; height: auto; background: transparent; border: none;">
 </div>
 
       

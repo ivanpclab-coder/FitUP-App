@@ -116,6 +116,10 @@ input, select {
 .type-chip.selected { background: var(--cian-dark); color: white; border-color: var(--cian-dark); }
 
 .btn-main {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
     background: #1575d5; 
     color: #FFFFFF; 
     border: none; 
@@ -1458,3 +1462,330 @@ input, select {
     box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4) !important; /* Sombra del mismo color */
     transform: translateY(-10px); /* Esto lo mueve físicamente hacia arriba */
 }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+/* ══════════════════════════════════════════════════════
+   PANTALLA DE LOGIN — FITUP AUTH SYSTEM
+   ══════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════
+   PANTALLA LOGIN FITUP — COMPACTA 4 DÍGITOS
+   ══════════════════════════════════════════════════════ */
+
+#screen-login {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    height: 100vh;
+    background: linear-gradient(160deg, #020c1a 0%, #051e38 55%, #0a2a4a 100%);
+    overflow: hidden;
+    padding: 0 !important;
+    z-index: 9999;
+    display: none;
+    box-sizing: border-box;
+}
+
+#screen-login.active {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-bg-glow {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(0,209,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: loginGlowPulse 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes loginGlowPulse {
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50%       { opacity: 1;   transform: translateX(-50%) scale(1.12); }
+}
+
+.login-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 24px;
+    gap: 14px;
+}
+
+/* ── LOGO ── */
+.login-logo-area {
+    text-align: center;
+}
+
+.login-logo-img {
+    width: 52px;
+    height: auto;
+    filter: drop-shadow(0 0 12px rgba(0,209,255,0.65));
+    animation: loginLogoBounce 2.5s ease-in-out infinite;
+}
+
+@keyframes loginLogoBounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+}
+
+.login-brand {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.9rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, #00D1FF, #0077FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 2px 0 1px;
+    letter-spacing: 2px;
+}
+
+.login-tagline {
+    font-size: 0.58rem;
+    color: rgba(163, 212, 243, 0.75);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ── TARJETA ── */
+.login-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(0,209,255,0.2);
+    border-radius: 22px;
+    padding: 18px 18px 16px;
+    width: 100%;
+    max-width: 320px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.login-icon-drop {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    animation: loginDropBounce 2s ease-in-out infinite;
+}
+
+@keyframes loginDropBounce {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.15); }
+}
+
+.login-title {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 3px;
+}
+
+.login-subtitle {
+    font-size: 0.68rem;
+    color: rgba(163,212,243,0.8);
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+/* ── DISPLAY 4 DÍGITOS ── */
+.login-code-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1.5px solid rgba(0,209,255,0.25);
+    border-radius: 12px;
+    padding: 12px 10px;
+}
+
+.code-char {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 50px;
+    background: rgba(0,209,255,0.07);
+    border: 1.5px solid rgba(0,209,255,0.3);
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #00D1FF;
+    font-family: 'Courier New', monospace;
+    transition: all 0.15s;
+}
+
+.code-char.filled {
+    background: rgba(0,209,255,0.15);
+    border-color: #00D1FF;
+    box-shadow: 0 0 10px rgba(0,209,255,0.3);
+    transform: scale(1.05);
+}
+
+.code-char.active-cursor {
+    border-color: #00ff88;
+    box-shadow: 0 0 10px rgba(0,255,136,0.4);
+    animation: cursorBlink 0.8s ease-in-out infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+}
+
+/* ── MENSAJE ESTADO ── */
+.login-msg {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-msg.success {
+    background: rgba(0,255,136,0.12);
+    border: 1px solid rgba(0,255,136,0.35);
+    color: #00ff88;
+}
+
+.login-msg.error {
+    background: rgba(255,50,50,0.12);
+    border: 1px solid rgba(255,50,50,0.35);
+    color: #ff6b6b;
+}
+
+.login-msg.info {
+    background: rgba(0,209,255,0.1);
+    border: 1px solid rgba(0,209,255,0.3);
+    color: #00D1FF;
+}
+
+/* ── TECLADO PIN ── */
+.login-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.key-btn {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(0,209,255,0.18);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 13px 0;
+    cursor: pointer;
+    transition: all 0.12s;
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'Inter', sans-serif;
+}
+
+.key-btn:active {
+    background: rgba(0,209,255,0.18);
+    border-color: #00D1FF;
+    transform: scale(0.93);
+    box-shadow: 0 0 10px rgba(0,209,255,0.3);
+}
+
+.key-clear {
+    background: rgba(255,100,0,0.08);
+    border-color: rgba(255,100,0,0.3);
+    color: #ff6b35;
+}
+
+.key-clear:active {
+    background: rgba(255,100,0,0.2);
+}
+
+.key-enter {
+    background: linear-gradient(135deg, rgba(0,209,255,0.2), rgba(0,119,255,0.2));
+    border-color: rgba(0,209,255,0.45);
+    color: #00D1FF;
+    font-size: 1.3rem;
+}
+
+.key-enter:active {
+    background: linear-gradient(135deg, rgba(0,209,255,0.35), rgba(0,119,255,0.35));
+}
+
+/* ── SPINNER ── */
+.login-spinner {
+    width: 26px;
+    height: 26px;
+    border: 2.5px solid rgba(0,209,255,0.2);
+    border-top-color: #00D1FF;
+    border-radius: 50%;
+    animation: loginSpin 0.7s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes loginSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── FOOTER ── */
+.login-footer {
+    font-size: 0.6rem;
+    color: rgba(163,212,243,0.4);
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ── SHAKE ── */
+@keyframes loginShake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-7px); }
+    40%       { transform: translateX(7px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+}
+
+.shake {
+    animation: loginShake 0.4s ease;
+}
+
+.key-letra {
+    background: linear-gradient(135deg, rgba(0,209,255,0.25), rgba(0,119,255,0.25));
+    border-color: rgba(0,209,255,0.5);
+    color: #00D1FF;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.key-letra:active {
+    background: linear-gradient(135deg, rgba(0,209,255,0.4), rgba(0,119,255,0.4));
+    transform: scale(0.94);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

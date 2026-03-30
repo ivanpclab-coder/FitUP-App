@@ -1,6 +1,88 @@
+function obtenerFechaHoy() {
+    const h = new Date();
+    return `${h.getFullYear()}-${h.getMonth()+1}-${h.getDate()}`;
+}
+
+function calcularYGuardarRacha(historial) {
+    let racha = 0;
+    const hoy = new Date();
+    for (let i = 0; i < 3650; i++) {
+        const d = new Date(hoy);
+        d.setDate(hoy.getDate() - i);
+        const key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+        if (historial[key] === 'ok') racha++;
+        else break;
+    }
+    user.racha = racha;
+    localStorage.setItem('fitup_user_data', JSON.stringify(user));
+    return racha;
+}
+
+function registrarDiaHidratacion() {
+    const hoy = obtenerFechaHoy();
+    let historial = JSON.parse(localStorage.getItem('fitup_historial') || '{}');
+    const porcentaje = user.goal > 0 ? (user.current / user.goal) * 100 : 0;
+    historial[hoy] = porcentaje >= 100 ? 'ok' : 'parcial';
+    localStorage.setItem('fitup_historial', JSON.stringify(historial));
+    calcularYGuardarRacha(historial);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    verificarAcceso();
+    // ── SISTEMA DE AUTENTICACIÓN POR CÓDIGO DE BOTELLA ──────────
+    const codigoVinculado = localStorage.getItem('fitup_autenticado');
+
+    if (!codigoVinculado) {
+        // No hay código vinculado → mostrar pantalla de login
+        mostrarLogin();
+
+        if (typeof gestionarBotonesInstalacion === 'function') gestionarBotonesInstalacion();
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('✅ FitUP SW registrado'))
+                .catch((err) => console.error('❌ SW error:', err));
+        }
+        return; // Detener aquí — el resto lo maneja el login
+    }
+
+    // ── YA HAY CÓDIGO VINCULADO → flujo normal ───────────────────
+    const datosGuardados = localStorage.getItem('fitup_user_data');
+
+    if (datosGuardados) {
+        user = JSON.parse(datosGuardados);
+
+        const fechaGuardada = user.fechaUltimoDia || '';
+        const fechaHoy = obtenerFechaHoy();
+
+        if (fechaGuardada && fechaGuardada !== fechaHoy) {
+            let historial = JSON.parse(localStorage.getItem('fitup_historial') || '{}');
+            const porcentajeAyer = user.goal > 0 ? Math.min(100, Math.round((user.current / user.goal) * 100)) : 0;
+            historial[fechaGuardada] = porcentajeAyer >= 100 ? 'ok' : (porcentajeAyer > 0 ? 'parcial' : 'none');
+            localStorage.setItem('fitup_historial', JSON.stringify(historial));
+            calcularYGuardarRacha(historial);
+            user.current = 0;
+        }
+
+        user.fechaUltimoDia = fechaHoy;
+        localStorage.setItem('fitup_user_data', JSON.stringify(user));
+
+        cargarDatosEnFormulario();
+        requestAnimationFrame(() => {
+            showScreen('screen-dash');
+        });
+    } else {
+        showScreen('screen-access');
+    }
+
+    if (typeof gestionarBotonesInstalacion === 'function') gestionarBotonesInstalacion();
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('✅ FitUP SW registrado'))
+            .catch((err) => console.error('❌ SW error:', err));
+    }
 });
+
 let user = { 
     name: "", 
     goal: 0, 
@@ -14,33 +96,35 @@ let user = {
 };
 
 function showScreen(id) {
-
     const container = document.getElementById('app-container');
 
-const temas = {
-    'screen-dash': '#5e9918',        // Verde desvanecido
-    'screen-access': '#16915e', // Azul desvanecido
-    'screen-hidratacion': '#c98fdb',
-    'screen-data': '#f39c12',        // Naranja desvanecido
-    'screen-config': '#f8bf89',        // Naranja desvanecido
-    'screen-progreso': '#9b59b6'     // Morado desvanecido
-    
-};
+    const temas = {
+        'screen-dash': '#5e9918', 
+        'screen-access': '#16915e',
+        'screen-hidratacion': '#c98fdb',
+        'screen-data': '#f39c12',
+        'screen-config': '#f8bf89',
+        'screen-progreso': '#9b59b6'
+    };
 
+    const color = temas[id] || '#00d1ff';
+    if(container) {
+        container.style.setProperty('--chasis-color', color);
+    }
 
+    // --- MEJORA: LIMPIEZA TOTAL DE PANTALLAS ---
+    document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none'; // Forzamos que desaparezca del flujo
+    });
 
-const color = temas[id] || '#00d1ff';
-
-if(container) {
-    container.style.setProperty('--chasis-color', color);
-}
-
-    // 1. Ocultar todas las pantallas y mostrar la actual
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(id);
-    if(target) target.classList.add('active');
+    if(target) {
+        target.classList.add('active');
+        target.style.display = 'block'; // Solo mostramos la pantalla actual
+    }
 
-    // 2. Controlar visibilidad de Header y Nav (Solo en pantallas públicas)
+    // 2. Controlar visibilidad de Header y Nav
     const uiHeader = document.getElementById('ui-header');
     const navBottom = document.getElementById('nav-bottom');
     const publicScreens = ['screen-dash', 'screen-progreso', 'screen-hidratacion', 'screen-data', 'screen-about'];
@@ -49,42 +133,38 @@ if(container) {
         if(uiHeader) uiHeader.style.display = 'flex';
         if(navBottom) navBottom.style.display = 'flex';
     } else {
-        // Ocultar si estamos en pantallas de configuración o carga
         if(uiHeader) uiHeader.style.display = 'none';
         if(navBottom) navBottom.style.display = 'none';
     }
 
-    // --- Lógica Específica para la pantalla de PROGRESO ---
+    // --- Lógica Específica (Mantenemos tu código original) ---
     if(id === 'screen-progreso') {
-        // Ejecuta la función que dibuja el calendario, racha y stats
         renderProgreso();
     }
 
     if(id === 'screen-hidratacion') {
-    renderHidratacion();
+        renderHidratacion();
     }
 
-    // --- Lógica Específica para la pantalla de DASHBOARD ---
+    if (id === 'screen-config') {
+        cargarDatosEnFormulario();
+    }
+
     if(id === 'screen-dash') {
         // Actualizar textos básicos del usuario
-        document.getElementById('user-display').innerText = user.name || "Usuario";
-        document.getElementById('dash-imc').innerText = user.imc || "--";
-        document.getElementById('dash-goal').innerText = (user.goal || 0) + " ml";
+        if(document.getElementById('user-display')) document.getElementById('user-display').innerText = user.name || "Usuario";
+        if(document.getElementById('dash-imc')) document.getElementById('dash-imc').innerText = user.imc || "--";
+        if(document.getElementById('dash-goal')) document.getElementById('dash-goal').innerText = (user.goal || 0) + " ml";
         
-        // Cargar Widget de Ejercicios y Gráficos
         actualizarWidgetEjercicios();
         initCharts(); 
         updateUI();
     }
 
-    // Dentro de tu función showScreen(id)
     if(id === 'screen-data') {
-    mostrarTipAleatorio(); // <--- Aquí lanzamos el cambio de tip
-    // Aquí también podrías actualizar los datos de IMC y metas del usuario
+        mostrarTipAleatorio();
     }
-
 }
-
 // Nueva función independiente para no saturar showScreen
 function actualizarWidgetEjercicios() {
     const actVal = document.getElementById('dash-act-val');
@@ -247,105 +327,92 @@ function startLoading() {
 }
 
 function handleSaveData() {
-    // 1. Obtener valores de los inputs
-    const n = document.getElementById('in-name').value.trim();
-    const age = parseInt(document.getElementById('in-age').value); // Añadida la edad
-    const w = parseFloat(document.getElementById('in-weight').value);
-    const h = parseFloat(document.getElementById('in-height').value);
-    const act = document.getElementById('in-act').value; // Bajo, Medio, Alto
-        
-    // 2. VALIDACIÓN DE ALTA CONCENTRACIÓN (Modificado)
-    
-    // Validar Nombre: Solo letras
+    const n   = document.getElementById('in-name').value.trim();
+    const age = parseInt(document.getElementById('in-age').value);
+    const w   = parseFloat(document.getElementById('in-weight').value);
+    const h   = parseFloat(document.getElementById('in-height').value);
+    const gen = document.getElementById('in-gen').value;
+    const act = document.getElementById('in-act').value;
+
+    // Validaciones
     const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
     if (!regexNombre.test(n) || n === "") {
-        alert("⚠️ ERROR EN NOMBRE: Solo se permiten letras.\nAlternativa: Escribe un nombre real sin números ni símbolos.");
+        alert("⚠️ NOMBRE: Solo se permiten letras.");
         document.getElementById('in-name').focus();
         return;
     }
-
-    // Validar Edad: 8 a 80
     if (isNaN(age) || age < 6 || age > 80) {
-        alert("⚠️ ERROR EN EDAD: El rango permitido es de 6 a 80 años.\nAlternativa: Ingresa una edad válida para ajustar tus necesidades.");
+        alert("⚠️ EDAD: Rango permitido 6 a 80 años.");
         document.getElementById('in-age').focus();
         return;
     }
-
-    // Validar Peso: 30 a 200kg
     if (isNaN(w) || w < 30 || w > 200) {
-        alert("⚠️ ERROR EN PESO: El rango permitido es de 30kg a 200kg.\nAlternativa: Revisa el peso ingresado (debe ser un número).");
+        alert("⚠️ PESO: Rango permitido 30kg a 200kg.");
         document.getElementById('in-weight').focus();
         return;
     }
-
-    // Validar Altura: 1.0 a 2.3m
     if (isNaN(h) || h < 1.0 || h > 2.3) {
-        alert("⚠️ ERROR EN ALTURA: El rango permitido es de 1.0m a 2.30m.\nAlternativa: Usa el formato de punto para decimales (ej: 1.70).");
+        alert("⚠️ ALTURA: Rango permitido 1.0m a 2.30m (ej: 1.75).");
         document.getElementById('in-height').focus();
         return;
     }
 
-    // 3. Cálculo de IMC (Continúa el proceso original)
+    // Cálculo IMC
     const imcValue = (w / (h * h)).toFixed(1);
-    user.imc = imcValue;
-    user.name = n;
-    user.age = age; // Guardamos la edad en el objeto user
-    user.activity = act;
 
-    // 4. Determinar Categoría de IMC
+    // Categoría IMC
     let categoria = "";
-    let colorCat = "";
-    if (imcValue < 18.5) { categoria = "Bajo peso"; colorCat = "#3498db"; }
-    else if (imcValue <= 24.9) { categoria = "Peso saludable"; colorCat = "#27ae60"; }
-    else if (imcValue <= 29.9) { categoria = "Sobrepeso"; colorCat = "#f39c12"; }
-    else { categoria = "Obesidad"; colorCat = "#e74c3c"; }
-    
-    // 5. Lógica de Nivel de Entrenamiento
-    let nivelEntreno = ""; 
-    if (act === "Bajo" && (categoria === "Bajo peso" || categoria === "Peso saludable" )) {
-        nivelEntreno = "Básico";        
-    } else if (act === "Bajo" && (categoria === "Sobrepeso" || categoria === "Obesidad")) {
-        nivelEntreno = "Principiante";
-    } else if (act === "Medio") {
-        nivelEntreno = "Intermedio";
-    } else if (act === "Alto") {
-        nivelEntreno = "Avanzado";
-    } else {
-        nivelEntreno = "Adaptativo";
-    }
+    let colorCat  = "";
+    if      (imcValue < 18.5)  { categoria = "Bajo peso";       colorCat = "#3498db"; }
+    else if (imcValue <= 24.9) { categoria = "Peso saludable";  colorCat = "#27ae60"; }
+    else if (imcValue <= 29.9) { categoria = "Sobrepeso";       colorCat = "#f39c12"; }
+    else                       { categoria = "Obesidad";         colorCat = "#e74c3c"; }
 
-    user.level = nivelEntreno; 
+    // Nivel de entrenamiento
+    let nivelEntreno = "";
+    if      (act === "Bajo"  && (categoria === "Bajo peso" || categoria === "Peso saludable")) nivelEntreno = "Básico";
+    else if (act === "Bajo"  && (categoria === "Sobrepeso" || categoria === "Obesidad"))       nivelEntreno = "Principiante";
+    else if (act === "Medio")  nivelEntreno = "Intermedio";
+    else if (act === "Alto")   nivelEntreno = "Avanzado";
+    else                       nivelEntreno = "Adaptativo";
 
-    // 6. Cálculo de meta de agua
+    // Meta de agua
     let extraAgua = 0;
-    if(act === 'Medio') extraAgua = 400;
-    if(act === 'Alto') extraAgua = 800;
-    user.goal = Math.round((w * 35) + extraAgua);
+    if (act === 'Medio') extraAgua = 400;
+    if (act === 'Alto')  extraAgua = 800;
+    const meta = Math.round((w * 35) + extraAgua);
 
-    // 7. ACTUALIZAR LA INTERFAZ
-    try {
-        document.getElementById('res-imc').innerText = "IMC: " + user.imc;
-        
-        const catElement = document.getElementById('res-cat');
-        if(catElement) {
-            catElement.innerText = "Categoría: " + categoria;
-            catElement.style.color = colorCat;
-        }
+    // Guardar en objeto global
+    user.name      = n;
+    user.age       = age;
+    user.weight    = w;
+    user.height    = h;
+    user.gender    = gen;
+    user.activity  = act;
+    user.imc       = imcValue;
+    user.categoria = categoria;
+    user.level     = nivelEntreno;
+    user.goal      = meta;
 
-        const nivelElem = document.getElementById('res-nivel-entreno');
-        if (nivelElem) {
-            nivelElem.innerText = "Nivel de Ejercicio: " + user.level;
-        }
+    // Guardar en localStorage
+    localStorage.setItem('fitup_user_data', JSON.stringify(user));
 
-        document.getElementById('res-water').innerText = "HIDRATACIÓN DIARIA: " + user.goal + " ml";
-        
-        document.getElementById('results-labels').style.display = 'block';
-        document.getElementById('btn-empezar').style.display = 'block';
-        
-        alert("¡Datos guardados con éxito!");
-    } catch (error) {
-        console.error("Error al actualizar la UI:", error);
-    }
+    // Actualizar interfaz — con verificación individual de cada elemento
+    const elIMC    = document.getElementById('res-imc');
+    const elCat    = document.getElementById('res-cat');
+    const elNivel  = document.getElementById('res-nivel-entreno');
+    const elWater  = document.getElementById('res-water');
+    const elLabels = document.getElementById('results-labels');
+    const elBtn    = document.getElementById('btn-empezar');
+
+    if (elIMC)    elIMC.innerText              = "IMC: " + imcValue;
+    if (elCat)  { elCat.innerText              = "Categoría: " + categoria; elCat.style.color = colorCat; }
+    if (elNivel)  elNivel.innerText            = nivelEntreno;
+    if (elWater)  elWater.innerText            = "HIDRATACIÓN DIARIA: " + meta + " ml";
+    if (elLabels) elLabels.style.display       = 'block';
+    if (elBtn)  { elBtn.style.display          = 'block'; elBtn.style.opacity = '1'; }
+
+    alert("✅ ¡Datos guardados con éxito!\nIMC: " + imcValue + " | Nivel: " + nivelEntreno + "\nMeta de agua: " + meta + " ml/día");
 }
 
 function goToExerciseSelect() {
@@ -477,10 +544,10 @@ let htmlHidratacion = `
 `;
 }
 
-// Función para sumar 500ml
+// Función para sumar 400ml
 function drinkBottle() {
     if(user.goal > 0) {
-        user.current = Math.min(user.current + 500, user.goal);
+        user.current = Math.min(user.current + 400, user.goal);
         renderHidratacion(); // Actualiza esta pantalla
         updateUI();          // Actualiza el Dashboard (Gota y Gráfico)
     }
@@ -518,6 +585,17 @@ function updateUI() {
     else if(percentage <= 70) img.src = 'Gotacansada.png'; 
     else img.src = 'gotalegre.png';
     
+    // Marcar fecha del día activo
+    user.fechaUltimoDia = obtenerFechaHoy();
+
+    // Registrar automáticamente cuando se completa la meta
+    if (percentage >= 100) {
+        registrarDiaHidratacion();
+    }
+
+    // Guardar consumo actual del día
+    localStorage.setItem('fitup_user_data', JSON.stringify(user));
+
     // 4. Actualizar el anillo de Chart.js
     if(circChart) { 
         circChart.data.datasets[0].data = [user.current, Math.max(0, user.goal - user.current)]; 
@@ -557,91 +635,382 @@ function initCharts() {
 }
 
 
+// ── SISTEMA DE RACHAS Y PROGRESO PERSISTENTE ─────────────────
+
+
+
 function renderProgreso() {
-    // 1. Obtener Fecha Actual
     const ahora = new Date();
-    const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    document.getElementById('mes-actual').innerText = nombresMeses[ahora.getMonth()];
+    const nombresMeses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                          "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-    // 2. Vincular Datos de Registro y Selección
-    document.getElementById('prog-imc').innerText = user.imc || "--";
-    document.getElementById('prog-act').innerText = (user.activity || "--").toUpperCase();
-    document.getElementById('prog-meta').innerText = (user.goal || 0) + " ml";
-    
-    // El tipo de ejercicio se toma de la selección en la pantalla de categorías
-    document.getElementById('prog-tipo').innerText = (user.selectedEx || "Pendiente").toUpperCase();
+    // Cargar historial guardado
+    let historial = JSON.parse(localStorage.getItem('fitup_historial') || '{}');
 
-    // 3. Calcular Racha y Porcentaje Actual
-    const porcentajeHoy = (user.current / user.goal) * 100 || 0;
-    user.racha = (porcentajeHoy >= 100) ? 1 : 0; // Incremento lógico basado en el Dashboard
-    document.getElementById('prog-racha-val').innerText = user.racha + (user.racha === 1 ? " DÍA" : " DÍAS");
+    // Registrar consumo de hoy automáticamente
+    const hoy = obtenerFechaHoy();
+    const porcentajeHoy = user.goal > 0 ? Math.min(100, Math.round((user.current / user.goal) * 100)) : 0;
+    historial[hoy] = porcentajeHoy >= 100 ? 'ok' : (porcentajeHoy > 0 ? 'parcial' : 'none');
+    localStorage.setItem('fitup_historial', JSON.stringify(historial));
 
-    // 4. Generar Calendario Mensual Dinámico
-    const calBody = document.getElementById('calendar-body');
-    calBody.innerHTML = "";
-    const ultimoDiaMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0).getDate();
-    const diaHoy = ahora.getDate();
+    // Calcular racha
+    const racha = calcularYGuardarRacha(historial);
 
-    for (let i = 1; i <= ultimoDiaMes; i++) {
-        let contenido = i;
-        let colorFondo = "white";
-        let colorTexto = "var(--text-dark)";
-        let borde = "1px solid var(--border)";
+    // Calcular totales históricos
+    const diasTotales   = Object.values(historial).filter(v => v === 'ok').length;
+    const semanas       = Math.floor(diasTotales / 7);
+    const meses         = Math.floor(diasTotales / 30);
+    const años          = Math.floor(diasTotales / 365);
+    const litrosTotales = (diasTotales * (user.goal || 0) / 1000).toFixed(1);
 
-        if (i < diaHoy) {
-            // Días pasados: Simulación de cumplimiento (puedes vincularlo a un historial real luego)
-            contenido = "✘";
-            colorTexto = "#ff4444";
-        } else if (i === diaHoy) {
-            // Día actual: Basado en el consumo del Dashboard
-            if (porcentajeHoy >= 100) {
-                contenido = "✔";
-                colorFondo = "#2ecc71";
-                colorTexto = "white";
-                borde = "none";
-            } else {
-                colorFondo = "rgba(0, 209, 255, 0.1)";
-                borde = "2px solid var(--cian)";
-            }
+    // ── RENDER DEL HTML ──────────────────────────────────────
+    const screen = document.getElementById('screen-progreso');
+    if (!screen) return;
+
+    screen.innerHTML = `
+    <style>
+        .prog-hero {
+            background: linear-gradient(135deg, #0a0f19 0%, #0d2137 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px solid rgba(0,209,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,209,255,0.1);
+            width: 100%;
         }
+        .prog-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #00D1FF, #0077FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .prog-subtitle {
+            font-size: 0.65rem;
+            color: #a3d4f3;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .racha-ring {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: conic-gradient(#ff4500 0%, #ff8c00 40%, #ffbe24 70%, #ff4500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px auto;
+            box-shadow: 0 0 30px rgba(255,69,0,0.5);
+            animation: rachaPulse 2s ease-in-out infinite;
+            position: relative;
+        }
+        .racha-ring::before {
+            content: '';
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #0a0f19;
+        }
+        .racha-inner {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .racha-num {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffbe24;
+            line-height: 1;
+            display: block;
+        }
+        .racha-label {
+            font-size: 0.55rem;
+            color: #ff8c00;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        @keyframes rachaPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,69,0,0.4); }
+            50%       { box-shadow: 0 0 40px rgba(255,140,0,0.8); }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #0d2137, #0a0f19);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px rgba(0,209,255,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    
+            /* CAMBIOS AQUÍ */
+            color: #ffffff; 
+            font-family: arial; /* Fuente limpia */
+            
+        }
+        .stat-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .stat-val  { font-size: 1.5rem; font-weight: 900; color: #00D1FF; line-height: 1; }
+        .stat-lbl  { font-size: 0.55rem; color: #55eae7; font-weight: 800; letter-spacing: 1px; margin-top: 3px; }
+        .prog-section {
+            background: #fff;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            width: 100%;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #eef2f7;
+        }
+        .prog-section-title {
+            font-size: 0.7rem;
+            font-weight: 900;
+            color: #1575d5;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-header {
+            font-size: 0.55rem;
+            font-weight: 900;
+            color: #aaa;
+            text-align: center;
+            padding-bottom: 4px;
+        }
+        .cal-cell {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 800;
+        }
+        .week-bar-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 6px;
+            height: 80px;
+        }
+        .week-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .week-bar-bg {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 6px;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+        .week-bar-fill {
+            width: 100%;
+            border-radius: 6px;
+            transition: height 0.8s ease;
+        }
+        .week-bar-lbl {
+            font-size: 0.55rem;
+            font-weight: 900;
+            color: #aaa;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.75rem;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row-key { color: #999; font-weight: 700; }
+        .info-row-val { color: #1575d5; font-weight: 900; }
+        .meta-bar-wrap { margin-top: 10px; }
+        .meta-bar-bg {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .meta-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00D1FF, #0077FF);
+            transition: width 1s ease;
+        }
+    </style>
 
-        calBody.innerHTML += `
-            <div class="cal-day" style="background:${colorFondo}; color:${colorTexto}; border:${borde}; font-weight:900; display:flex; align-items:center; justify-content:center; height:35px; border-radius:8px;">
-                ${contenido}
-            </div>`;
-    }
+    <!-- HERO -->
+    <div class="prog-hero">
+        <div class="prog-title">📈 MI PROGRESO</div>
+        
+        <div class="racha-ring">
+            <div class="racha-inner">
+                <span class="racha-num">${racha}</span>
+                <span class="racha-label">🔥 DÍAS</span>
+            </div>
+        </div>
+        <div style="font-size:0.8rem; color: #cdd4d5; font-weight:800;">RACHA ACTUAL DE HIDRATACIÓN</div>
+        <div style="font-size:0.7rem; color: #d1cbcb; margin-top:4px;">
+            ${racha === 0 ? '¡Comienza hoy tu racha! 💧' : racha < 7 ? '¡Vas muy bien! Sigue así 💪' : racha < 30 ? '¡Eres imparable! 🚀' : '¡Leyenda de la hidratación! 🏆'}
+        </div>
+    </div>
 
-    // 5. Consumo Semanal (Widget de Barras/Botellas)
-    const botContainer = document.getElementById('bottle-container');
-    botContainer.innerHTML = "";
-    const diasletras = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-    const diaSemanaHoy = (ahora.getDay() + 6) % 7; // Ajuste para que Lunes sea 0
+    <!-- ESTADÍSTICAS GLOBALES -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-val">${diasTotales}</div>
+            <div style="font-size:0.7rem; color: #eceeef; margin-top:4px;">
+            Días completados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📆</div>
+            <div class="stat-val">${semanas}</div>
+            <div style="font-size:0.7rem; color: #eceeef; margin-top:4px;">
+            Semana</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🗓️</div>
+            <div class="stat-val">${meses}</div>
+            <div style="font-size:0.7rem; color: #eceeef; margin-top:4px;">
+            Meses</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💧</div>
+            <div class="stat-val">${litrosTotales}L</div>
+            <div style="font-size:0.7rem; color: #eceeef; margin-top:4px;">
+           Litros totales</div>
+        </div>
+    </div>
 
-    diasletras.forEach((l, index) => {
+    <!-- META DE HOY -->
+    <div class="prog-section">
+        <div class="prog-section-title">💧 META DE HOY</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.75rem; font-weight:700; color:#333;">${user.current || 0} ml / ${user.goal || 0} ml</span>
+            <span style="font-size:0.75rem; font-weight:900; color:${porcentajeHoy>=100?'#27ae60':'#1575d5'};">${porcentajeHoy}%</span>
+        </div>
+        <div class="meta-bar-bg">
+            <div class="meta-bar-fill" style="width:${porcentajeHoy}%; background:${porcentajeHoy>=100?'linear-gradient(90deg,#27ae60,#2ecc71)':'linear-gradient(90deg,#00D1FF,#0077FF)'};"></div>
+        </div>
+    </div>
+
+    <!-- CONSUMO SEMANAL -->
+    <div class="prog-section">
+        <div class="prog-section-title">📊 ESTA SEMANA</div>
+        <div class="week-bar-row" id="prog-week-bars"></div>
+    </div>
+
+    <!-- CALENDARIO MENSUAL -->
+    <div class="prog-section">
+        <div class="prog-section-title">📅 ${nombresMeses[ahora.getMonth()].toUpperCase()} ${ahora.getFullYear()}</div>
+        <div class="cal-grid">
+            ${['L','M','X','J','V','S','D'].map(d=>`<div class="cal-header">${d}</div>`).join('')}
+            <div id="prog-cal-body" style="display:contents;"></div>
+        </div>
+    </div>
+
+    <!-- DATOS DEL PERFIL -->
+    <div class="prog-section">
+        <div class="prog-section-title">👤 MI PERFIL</div>
+        <div class="info-row"><span class="info-row-key">IMC</span><span class="info-row-val">${user.imc || '--'}</span></div>
+        <div class="info-row"><span class="info-row-key">Categoría</span><span class="info-row-val">${user.categoria || '--'}</span></div>
+        <div class="info-row"><span class="info-row-key">Nivel</span><span class="info-row-val">${user.level || '--'}</span></div>
+        <div class="info-row"><span class="info-row-key">Actividad</span><span class="info-row-val">${(user.activity||'--').toUpperCase()}</span></div>
+        <div class="info-row"><span class="info-row-key">Meta diaria</span><span class="info-row-val">${user.goal || 0} ml</span></div>
+        <div class="info-row"><span class="info-row-key">Ejercicio</span><span class="info-row-val">${(user.selectedEx||'Pendiente').toUpperCase()}</span></div>
+    </div>
+    `;
+
+    // ── BARRAS SEMANALES ─────────────────────────────────────
+    const diasLetras = ['L','M','X','J','V','S','D'];
+    const diaSemana  = (ahora.getDay() + 6) % 7;
+    const barsEl     = document.getElementById('prog-week-bars');
+
+    diasLetras.forEach((letra, i) => {
+        const d = new Date(ahora);
+        d.setDate(ahora.getDate() - diaSemana + i);
+        const key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+        const estado = historial[key];
+
         let altura = 0;
-        if (index < diaSemanaHoy) altura = 100; // Días pasados llenos
-        if (index === diaSemanaHoy) altura = Math.min(100, porcentajeHoy); // Hoy progresa con el agua bebida
+        let color  = '#00D1FF';
+        if (estado === 'ok')      { altura = 100; color = '#27ae60'; }
+        else if (estado === 'parcial') { altura = 50;  color = '#f39c12'; }
+        else if (i < diaSemana)   { altura = 0;   color = '#e74c3c'; }
 
-        botContainer.innerHTML += `
-            <div class="bottle-wrapper">
-                <div class="bottle-frame" style="background:#eee;">
-                    <div class="bottle-fill" style="height: ${altura}%; transition: height 0.5s ease;"></div>
-                </div>
-                <div class="bottle-label">${l}</div>
-            </div>`;
+        const isHoy = i === diaSemana;
+
+        barsEl.innerHTML += `
+        <div class="week-bar-wrap">
+            <div class="week-bar-bg" style="border: ${isHoy?'2px solid #00D1FF':'none'}; border-radius:6px;">
+                <div class="week-bar-fill" style="height:${altura}%; background:${color};"></div>
+            </div>
+            <div class="week-bar-lbl" style="color:${isHoy?'#00D1FF':'#aaa'}">${letra}</div>
+        </div>`;
     });
+
+    // ── CALENDARIO MENSUAL ───────────────────────────────────
+    const calEl        = document.getElementById('prog-cal-body');
+    const primerDia    = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+    const offsetInicio = (primerDia.getDay() + 6) % 7;
+    const totalDias    = new Date(ahora.getFullYear(), ahora.getMonth()+1, 0).getDate();
+    const diaHoyNum    = ahora.getDate();
+
+    let calHTML = '';
+    for (let e = 0; e < offsetInicio; e++) calHTML += `<div></div>`;
+
+    for (let d = 1; d <= totalDias; d++) {
+        const key    = `${ahora.getFullYear()}-${ahora.getMonth()+1}-${d}`;
+        const estado = historial[key];
+        const esHoy  = d === diaHoyNum;
+
+        let bg   = '#f5f5f5';
+        let color= '#ccc';
+        let txt  = d;
+
+        if (estado === 'ok')           { bg = '#27ae60'; color = 'white'; txt = '✔'; }
+        else if (estado === 'parcial') { bg = '#f39c12'; color = 'white'; txt = '~'; }
+        else if (d < diaHoyNum)        { bg = '#fce4e4'; color = '#e74c3c'; txt = '✘'; }
+
+        const borde = esHoy ? 'border:2px solid #00D1FF;' : '';
+        calHTML += `<div class="cal-cell" style="background:${bg}; color:${color}; ${borde}">${txt}</div>`;
+    }
+    calEl.innerHTML = calHTML;
 }
+// ─────────────────────────────────────────────────────────────
 
 function previewPhoto(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            // Actualizar la vista previa en la configuración
             document.getElementById('profile-img-preview').src = e.target.result;
-            
-            // Guardar la imagen en el objeto user (opcional, para usarla en otras pantallas)
             user.photo = e.target.result;
+            localStorage.setItem('fitup_user_data', JSON.stringify(user)); // ← línea nueva
         }
         
         reader.readAsDataURL(input.files[0]);
@@ -838,126 +1207,203 @@ function toggleRutinaCheck(elemento) {
     validateSelections(); // Llamamos a tu función de validación existente
 }
 
-/*Usuario-Código*/
+// ════════════════════════════════════════════════════════════════
+//  SISTEMA DE AUTENTICACIÓN FITUP — CÓDIGO DE BOTELLA
+//  Verifica contra Google Apps Script (tu Sheet en tiempo real)
+// ════════════════════════════════════════════════════════════════
 
-// Función para verificar el código al iniciar la app
-async function verificarAcceso() {
-    // IMPORTANTE: Asegúrate de que el nombre coincide: 'fitup_autenticado'
-    /*const accesoAutorizado = localStorage.getItem('fitup_autenticado');
+// ⚠️ Pega aquí tu URL del Apps Script desplegado
+const FITUP_API_URL = 'https://script.google.com/macros/s/AKfycbzgULRUPbAmiknTg-byFG1w9x-N0thvtILfZ_GyYwTWORvLI1t9pMOHZwPG_zY28CWx/exec';
 
-    if (accesoAutorizado === 'true') {
-        // Si ya está validado, ocultamos la pantalla de bloqueo
-        const lockScreen = document.getElementById('screen-lock');
-        if(lockScreen) lockScreen.style.display = 'none';
-    } else {
-        // Si no está validado, nos aseguramos de que la pantalla de bloqueo sea visible
-        const lockScreen = document.getElementById('screen-lock');
-        if(lockScreen) lockScreen.style.display = 'flex';
-    }
-        */
+// Columnas de tu Sheet (fila 5 en adelante):
+// A=Código  B=Cliente  C=Correo  D=Teléfono
+// E=Fecha de compra  F=Activado(SI/NO)  G=Fecha activación  H=Device ID
 
-    document.getElementById('screen-lock').style.display = 'flex';
-}
+let loginBuffer = ''; // Almacena dígitos del PIN ingresado (hasta 6 dígitos)
 
+function loginKey(digit) {
+    if (loginBuffer.length >= 4) return;
+    loginBuffer += digit;
+    actualizarDisplayLogin();
 
-async function validarCodigoConGoogleSheets(codigoIngresado) {
-    // Aquí llamarías a tu Google Apps Script que busca en el Sheet
-    // Ejemplo de endpoint ficticio:
-    const response = await fetch(`https://script.google.com/macros/s/TU_ID_SCRIPT/exec?codigo=${codigoIngresado}`);
-    const resultado = await response.json();
-
-    if (resultado.valido) {
-        localStorage.setItem('app_acceso_autorizado', 'true');
-        alert("¡Acceso concedido! Bienvenido.");
-        mostrarPantallaPrincipal();
-    } else {
-        alert("Código incorrecto o ya utilizado. Contacta a tu vendedor.");
+    // Verifica automáticamente al completar los 4 dígitos
+    if (loginBuffer.length === 4) {
+        setTimeout(() => loginVerificar(), 300);
     }
 }
 
+function loginClear() {
+    loginBuffer = loginBuffer.slice(0, -1);
+    actualizarDisplayLogin();
+    const manualInput = document.getElementById('login-input-manual');
+    if (manualInput) manualInput.value = '';
+}
 
-// Al cargar la página, verificamos si ya está validada
-window.onload = function() {
-    if (localStorage.getItem('fitup_autenticado') === 'true') {
-        document.getElementById('screen-lock').style.display = 'none';
-    }
-};
+function loginSyncManual(valor) {
+    const limpio = valor.toUpperCase().replace(/[^A-Z0-9\-]/g, '').substring(0, 10);
+    document.getElementById('login-input-manual').value = limpio;
+    loginBuffer = limpio.replace('-', '').substring(0, 6);
+    actualizarDisplayLogin();
+}
 
-async function validarAcceso() {
-    const codigoInput = document.getElementById('input-codigo').value.trim();
-    const urlScript = "https://script.google.com/macros/s/AKfycbxqz0sybOKMOInqgmKmfikmnQA26bXXRdqSqqcHUPREc1OAkuGNXP1ogAkmy72PzwK8/exec";
+function actualizarDisplayLogin() {
+    const chars = document.querySelectorAll('.code-char');
 
-    if (!codigoInput) {
-        alert("Por favor, ingresa un código.");
+    chars.forEach((el, i) => {
+        const letra = loginBuffer[i] || '';
+        el.innerText = letra || '_';
+        el.classList.toggle('filled', !!letra);
+        el.classList.toggle('active-cursor', i === loginBuffer.length && loginBuffer.length < 4);
+    });
+}
+
+function mostrarMsgLogin(tipo, texto) {
+    const msg = document.getElementById('login-msg');
+    if (!msg) return;
+    msg.className = 'login-msg ' + tipo;
+    msg.innerText = texto;
+    msg.style.display = 'block';
+}
+
+function ocultarMsgLogin() {
+    const msg = document.getElementById('login-msg');
+    if (msg) msg.style.display = 'none';
+}
+
+async function loginVerificar() {
+    const codigoRaw = loginBuffer.trim().toUpperCase();
+
+    if (codigoRaw.length < 3) {
+        mostrarMsgLogin('error', '⚠️ Ingresa tu código completo (ej: F03).');
+        sacudirDisplay();
         return;
     }
 
-    // 1. REVISAR VINCULACIÓN PREVIA EN ESTE CELULAR
-    const codigoVinculado = localStorage.getItem('fitup_codigo_vinculado');
+    // ══════════════════════════════════════════
+    //  CLAVE MAESTRA — Solo para pruebas
+    //  Cambia 'JAH' por la clave que quieras
+    // ══════════════════════════════════════════
+    const CLAVE_MAESTRA = 'F00';
 
-    if (codigoVinculado) {
-        // Si ya hay una botella vinculada, solo dejamos pasar si el código coincide
-        if (codigoInput === codigoVinculado) {
-            console.log("Acceso por vinculación local exitosa.");
-            ejecutarEfectoDesbloqueo("¡Bienvenido de nuevo! Acceso por vinculación.");
-            return;
-        } else {
-            alert("⚠️ Este celular ya está vinculado a otra botella.\nUsa el código original o contacta a soporte.");
-            return;
-        }
+    if (codigoRaw === CLAVE_MAESTRA) {
+        mostrarMsgLogin('info', '🔑 Acceso maestro activado...');
+        if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+        localStorage.setItem('fitup_autenticado', CLAVE_MAESTRA);
+
+        setTimeout(() => {
+            ocultarLogin();
+            const datosGuardados = localStorage.getItem('fitup_user_data');
+            if (datosGuardados) {
+                user = JSON.parse(datosGuardados);
+                cargarDatosEnFormulario();
+                showScreen('screen-dash');
+            } else {
+                showScreen('screen-access');
+            }
+        }, 1000);
+        return; // ← No va al servidor
     }
+    // ══════════════════════════════════════════
 
-    // 2. SI NO HAY VINCULACIÓN, CONSULTAR A GOOGLE SHEETS (Primera vez)
+    const loader = document.getElementById('login-loader');
+    const btnEnter = document.getElementById('btn-login-enter');
+    if (loader) loader.style.display = 'block';
+    if (btnEnter) { btnEnter.disabled = true; btnEnter.style.opacity = '0.5'; }
+    ocultarMsgLogin();
+
     try {
-        const response = await fetch(`${urlScript}?codigo=${encodeURIComponent(codigoInput)}`);
-        const resultado = await response.json();
+        const resultado = await verificarCodigoEnSheets(codigoRaw);
 
         if (resultado.valido) {
-            // Guardamos que está autenticado y VINCULAMOS el código permanentemente
-            localStorage.setItem('fitup_autenticado', 'true');
-            localStorage.setItem('fitup_codigo_vinculado', codigoInput);
-            
-            ejecutarEfectoDesbloqueo("¡Acceso concedido! Tu FitUP ha quedado vinculada a este celular.");
-            
+            mostrarMsgLogin('success', '✅ ¡Código verificado! Iniciando FitUP...');
+            if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+            localStorage.setItem('fitup_autenticado', codigoRaw);
+
+            setTimeout(() => {
+                ocultarLogin();
+                const datosGuardados = localStorage.getItem('fitup_user_data');
+                if (datosGuardados) {
+                    user = JSON.parse(datosGuardados);
+                    cargarDatosEnFormulario();
+                    showScreen('screen-dash');
+                } else {
+                    showScreen('screen-access');
+                }
+            }, 1500);
+
+        } else if (resultado.razon === 'inactivo') {
+            mostrarMsgLogin('error', '❌ Código no activado. Contacta a tu distribuidor FitUP.');
+            sacudirDisplay();
+
+        } else if (resultado.razon === 'no_encontrado') {
+            mostrarMsgLogin('error', '❌ Código no encontrado. Verifica e intenta de nuevo.');
+            sacudirDisplay();
+            if (navigator.vibrate) navigator.vibrate(300);
+
         } else {
-            // Manejo de errores del servidor
-            if (resultado.msg === "Ya usado") {
-                alert("❌ Este código ya fue activado en otro dispositivo.\nSi cambiaste de celular, solicita un reset de tu clave.");
-            } else {
-                alert("❌ Código incorrecto. Verifica los datos proporcionados por el vendedor.");
-            }
+            mostrarMsgLogin('error', '⚠️ Error inesperado. Intenta de nuevo.');
+            sacudirDisplay();
         }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Hubo un problema de conexión. Verifica tu internet.");
+
+    } catch (err) {
+        console.error('Error FitUP:', err);
+        mostrarMsgLogin('error', '⚠️ Sin conexión al servidor. Verifica tu internet.');
+        sacudirDisplay();
+    } finally {
+        if (loader) loader.style.display = 'none';
+        if (btnEnter) { btnEnter.disabled = false; btnEnter.style.opacity = '1'; }
     }
 }
 
-// Función auxiliar para no repetir código del efecto visual
-function ejecutarEfectoDesbloqueo(mensaje) {
-    const lockScreen = document.getElementById('screen-lock');
-    lockScreen.style.transition = "all 0.5s ease";
-    lockScreen.style.opacity = "0";
-    setTimeout(() => {
-        lockScreen.style.display = 'none';
-        alert(mensaje);
-    }, 500);
+async function verificarCodigoEnSheets(codigoIngresado) {
+    const codigoLimpio = codigoIngresado.toString().trim().toUpperCase();
+
+    const url = `${FITUP_API_URL}?accion=verificar&codigo=${encodeURIComponent(codigoLimpio)}`;
+
+    const response = await fetch(url, { cache: 'no-store' });
+
+    if (!response.ok) throw new Error('Error de conexión con el servidor FitUP.');
+
+    const data = await response.json();
+    return data;
 }
+
+function sacudirDisplay() {
+    const display = document.getElementById('login-display');
+    if (!display) return;
+    display.classList.remove('shake');
+    void display.offsetWidth;
+    display.classList.add('shake');
+    setTimeout(() => display.classList.remove('shake'), 500);
+
+    setTimeout(() => {
+        loginBuffer = '';
+        actualizarDisplayLogin();
+        const manualInput = document.getElementById('login-input-manual');
+        if (manualInput) manualInput.value = '';
+    }, 600);
+}
+
+
+
+
 // Resetear clave
 
 function resetearAcceso() {
-    // Un toque de vibración si es móvil
     if (navigator.vibrate) navigator.vibrate(50);
 
-    const confirmar = confirm("⚠️ ATENCIÓN: Se cerrará el acceso y necesitarás un nuevo código. ¿Continuar?");
+    const confirmar = confirm("⚠️ CERRAR ACCESO\n\nSe borrarán todos tus datos y necesitarás ingresar tu código de botella nuevamente.\n\n¿Continuar?");
     
     if (confirmar) {
-        // Efecto de parpadeo antes de salir
         document.body.style.transition = "0.3s";
         document.body.style.opacity = "0";
         
         setTimeout(() => {
+            // Borrar TODOS los datos de la sesión
             localStorage.removeItem('fitup_autenticado');
+            localStorage.removeItem('fitup_user_data');
+            localStorage.removeItem('fitup_historial');
+            // Mantener fitup_device_id para que el código siga vinculado al dispositivo
             location.reload();
         }, 300);
     }
@@ -1151,4 +1597,161 @@ function rotarEntrenador() {
 // Mantenemos el intervalo de 3 segundos para que sea cómodo de leer
 if(!window.trainerInterval) {
     window.trainerInterval = setInterval(rotarEntrenador, 1500);
+}
+
+// ── PWA INSTALACIÓN ──────────────────────────────────────────
+window._deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window._deferredPrompt = e;
+    console.log('✅ Prompt de instalación listo');
+    const btnInstalar = document.getElementById('btn-instalar');
+    if (btnInstalar) {
+        btnInstalar.disabled = false;
+        btnInstalar.style.opacity = '1';
+        btnInstalar.style.pointerEvents = 'auto';
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('✅ FitUP instalado correctamente');
+    window._deferredPrompt = null;
+    gestionarBotonesInstalacion();
+});
+
+async function instalarApp() {
+    if (window._deferredPrompt) {
+        window._deferredPrompt.prompt();
+        const { outcome } = await window._deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            window._deferredPrompt = null;
+        }
+    } else {
+        alert("Para instalar FitUP:\n📱 iPhone: toca 'Compartir' → 'Añadir a pantalla de inicio'.\n🤖 Android/PC: toca los 3 puntos del navegador → 'Instalar aplicación'.");
+        const btnInstalar = document.getElementById('btn-instalar');
+        const btnVincular = document.getElementById('btn-vincular');
+        if (btnInstalar) {
+            btnInstalar.disabled = true;
+            btnInstalar.style.opacity = '0.3';
+            btnInstalar.style.pointerEvents = 'none';
+            btnInstalar.innerHTML = '✅ FITUP INSTALADO';
+        }
+        if (btnVincular) {
+            btnVincular.disabled = false;
+            btnVincular.style.opacity = '1';
+            btnVincular.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+function gestionarBotonesInstalacion() {
+    const btnInstalar = document.getElementById('btn-instalar');
+    const btnVincular = document.getElementById('btn-vincular');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    if (isStandalone) {
+        if (btnInstalar) {
+            btnInstalar.disabled = true;
+            btnInstalar.style.opacity = '0.3';
+            btnInstalar.style.pointerEvents = 'none';
+            btnInstalar.innerHTML = '✅ FITUP INSTALADO';
+        }
+        if (btnVincular) {
+            btnVincular.disabled = false;
+            btnVincular.style.opacity = '1';
+            btnVincular.style.pointerEvents = 'auto';
+        }
+    } else {
+        if (btnInstalar) {
+            btnInstalar.disabled = false;
+            btnInstalar.style.opacity = '1';
+            btnInstalar.style.pointerEvents = 'auto';
+        }
+        if (btnVincular) {
+            btnVincular.disabled = true;
+            btnVincular.style.opacity = '0.3';
+            btnVincular.style.pointerEvents = 'none';
+        }
+    }
+}
+// ─────────────────────────────────────────────────────────────
+async function instalarApp() {
+    if (window._deferredPrompt) {
+        window._deferredPrompt.prompt();
+        const { outcome } = await window._deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            window._deferredPrompt = null;
+        }
+    } else {
+        // Fallback para iOS o cuando el prompt aún no está listo
+        alert("Para instalar FitUP:\n📱 iPhone: toca 'Compartir' → 'Añadir a pantalla de inicio'.\n🤖 Android/PC: toca los 3 puntos del navegador → 'Instalar aplicación'.");
+
+        const btnInstalar = document.getElementById('btn-instalar');
+        const btnVincular = document.getElementById('btn-vincular');
+        if (btnInstalar) {
+            btnInstalar.disabled = true;
+            btnInstalar.style.opacity = '0.3';
+            btnInstalar.style.pointerEvents = 'none';
+            btnInstalar.innerHTML = '✅ FITUP INSTALADO';
+        }
+        if (btnVincular) {
+            btnVincular.disabled = false;
+            btnVincular.style.opacity = '1';
+            btnVincular.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+// ── CARGA DE DATOS GUARDADOS EN EL FORMULARIO ────────────────
+function cargarDatosEnFormulario() {
+    if (!user || !user.name) return;
+
+    // Campos de texto y número
+    const inName   = document.getElementById('in-name');
+    const inAge    = document.getElementById('in-age');
+    const inWeight = document.getElementById('in-weight');
+    const inHeight = document.getElementById('in-height');
+    const inGen    = document.getElementById('in-gen');
+    const inAct    = document.getElementById('in-act');
+
+    if (inName)   inName.value   = user.name     || '';
+    if (inAge)    inAge.value    = user.age       || '';
+    if (inWeight) inWeight.value = user.weight    || '';
+    if (inHeight) inHeight.value = user.height    || '';
+    if (inGen)    inGen.value    = user.gender    || 'M';
+    if (inAct)    inAct.value    = user.activity  || 'Bajo';
+
+    // Foto de perfil
+    if (user.photo) {
+        const img = document.getElementById('profile-img-preview');
+        if (img) img.src = user.photo;
+    }
+
+    // Mostrar resultados calculados si ya existen
+    if (user.imc) {
+        const resImc   = document.getElementById('res-imc');
+        const resCat   = document.getElementById('res-cat');
+        const resNivel = document.getElementById('res-nivel-entreno');
+        const resWater = document.getElementById('res-water');
+        const resLabels = document.getElementById('results-labels');
+        const btnEmpezar = document.getElementById('btn-empezar');
+
+        if (resImc)    resImc.innerText   = 'IMC: ' + user.imc;
+        if (resCat)    resCat.innerText   = 'Categoría: ' + (user.categoria || '');
+        if (resNivel)  resNivel.innerText = 'Nivel de Ejercicio: ' + (user.level || '');
+        if (resWater)  resWater.innerText = 'HIDRATACIÓN DIARIA: ' + user.goal + ' ml';
+        if (resLabels) resLabels.style.display = 'block';
+        if (btnEmpezar) btnEmpezar.style.display = 'block';
+    }
+}
+// ─────────────────────────────────────────────────────────────
+function mostrarLogin() {
+    document.getElementById('screen-login').style.display = 'block';
+    document.getElementById('app-container').style.display = 'none';
+}
+
+function ocultarLogin() {
+    document.getElementById('screen-login').style.display = 'none';
+    document.getElementById('app-container').style.display = 'block';
 }
