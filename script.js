@@ -1222,21 +1222,26 @@ const FITUP_API_URL = 'https://script.google.com/macros/s/AKfycbzgULRUPbAmiknTg-
 let loginBuffer = ''; // Almacena dígitos del PIN ingresado (hasta 6 dígitos)
 
 function loginKey(digit) {
+    // Permitimos hasta 4 dígitos (ejemplo: F100)
     if (loginBuffer.length >= 4) return;
+    
     loginBuffer += digit;
     actualizarDisplayLogin();
 
-    // Verifica automáticamente al completar los 4 dígitos
-    if (loginBuffer.length === 4) {
-        setTimeout(() => loginVerificar(), 300);
-    }
+    // ELIMINAMOS la verificación automática aquí para que el usuario 
+    // pueda decidir si su código es de 3 o 4 dígitos y luego pulsar ENTER.
 }
 
 function loginClear() {
     loginBuffer = loginBuffer.slice(0, -1);
+    
+    // Si borramos el 4to dígito, eliminamos el span c3 para que la interfaz vuelva a verse de 3
+    const extra = document.getElementById('c3');
+    if (loginBuffer.length < 4 && extra) {
+        extra.remove();
+    }
+    
     actualizarDisplayLogin();
-    const manualInput = document.getElementById('login-input-manual');
-    if (manualInput) manualInput.value = '';
 }
 
 function loginSyncManual(valor) {
@@ -1247,14 +1252,28 @@ function loginSyncManual(valor) {
 }
 
 function actualizarDisplayLogin() {
-    const chars = document.querySelectorAll('.code-char');
+    const contenedor = document.querySelector('.login-code-display'); // Asegúrate que este sea el nombre de tu contenedor
+    
+    // 1. Limpiamos los 3 que ya existen por defecto en el HTML
+    for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('c' + i);
+        if (el) el.innerText = "_";
+    }
 
-    chars.forEach((el, i) => {
-        const letra = loginBuffer[i] || '';
-        el.innerText = letra || '_';
-        el.classList.toggle('filled', !!letra);
-        el.classList.toggle('active-cursor', i === loginBuffer.length && loginBuffer.length < 4);
-    });
+    // 2. Llenamos con lo que hay en el buffer
+    for (let i = 0; i < loginBuffer.length; i++) {
+        let el = document.getElementById('c' + i);
+        
+        // Si es el 4to dígito y el elemento 'c3' NO existe, lo creamos
+        if (!el && i === 3) {
+            el = document.createElement('span');
+            el.id = 'c3';
+            el.className = 'code-char'; // Usa la misma clase de tus otros spans
+            contenedor.appendChild(el);
+        }
+        
+        if (el) el.innerText = loginBuffer[i];
+    }
 }
 
 function mostrarMsgLogin(tipo, texto) {
@@ -1273,16 +1292,13 @@ function ocultarMsgLogin() {
 async function loginVerificar() {
     const codigoRaw = loginBuffer.trim().toUpperCase();
 
+    // CAMBIO: Ahora validamos que tenga al menos 3, pero ya no ponemos tope máximo aquí
     if (codigoRaw.length < 3) {
-        mostrarMsgLogin('error', '⚠️ Ingresa tu código completo (ej: F03).');
+        mostrarMsgLogin('error', '⚠️ Código demasiado corto (ej: F03 o F105).');
         sacudirDisplay();
         return;
     }
 
-    // ══════════════════════════════════════════
-    //  CLAVE MAESTRA — Solo para pruebas
-    //  Cambia 'JAH' por la clave que quieras
-    // ══════════════════════════════════════════
     const CLAVE_MAESTRA = 'F00';
 
     if (codigoRaw === CLAVE_MAESTRA) {
@@ -1301,9 +1317,8 @@ async function loginVerificar() {
                 showScreen('screen-access');
             }
         }, 1000);
-        return; // ← No va al servidor
+        return;
     }
-    // ══════════════════════════════════════════
 
     const loader = document.getElementById('login-loader');
     const btnEnter = document.getElementById('btn-login-enter');
