@@ -1211,9 +1211,14 @@ function toggleRutinaCheck(elemento) {
 //  SISTEMA DE AUTENTICACIÓN FITUP — CÓDIGO DE BOTELLA
 //  Verifica contra Google Apps Script (tu Sheet en tiempo real)
 // ════════════════════════════════════════════════════════════════
-
+// Al inicio de tu script.js o donde manejas el login exitoso
+function registrarAccesoExitoso(codigo) {
+    // Guardamos el código usado
+    localStorage.setItem('fitup_codigo_vinculado', codigo);
+    localStorage.setItem('fitup_autenticado', 'true');
+}
 // ⚠️ Pega aquí tu URL del Apps Script desplegado
-const FITUP_API_URL = 'https://script.google.com/macros/s/AKfycbzgULRUPbAmiknTg-byFG1w9x-N0thvtILfZ_GyYwTWORvLI1t9pMOHZwPG_zY28CWx/exec';
+const FITUP_API_URL = 'https://script.google.com/macros/s/AKfycbxgo2wB3AGYJKaQsDz39v0PKKxRVmkRM7WFBfaEYqu4_MeAuuQrwGlp17EOVIdgiFw/exec';
 
 // Columnas de tu Sheet (fila 5 en adelante):
 // A=Código  B=Cliente  C=Correo  D=Teléfono
@@ -1222,14 +1227,12 @@ const FITUP_API_URL = 'https://script.google.com/macros/s/AKfycbzgULRUPbAmiknTg-
 let loginBuffer = ''; // Almacena dígitos del PIN ingresado (hasta 6 dígitos)
 
 function loginKey(digit) {
-    // Permitimos hasta 4 dígitos (ejemplo: F100)
-    if (loginBuffer.length >= 4) return;
-    
-    loginBuffer += digit;
-    actualizarDisplayLogin();
-
-    // ELIMINAMOS la verificación automática aquí para que el usuario 
-    // pueda decidir si su código es de 3 o 4 dígitos y luego pulsar ENTER.
+    // Permitimos hasta 4 caracteres en el buffer (memoria)
+    if (loginBuffer.length < 4) {
+        loginBuffer += digit;
+        actualizarDisplayLogin();
+    }
+    // ELIMINADO: Ya no llamamos a loginVerificar() automáticamente aquí
 }
 
 function loginClear() {
@@ -1249,18 +1252,14 @@ function loginSyncManual(valor) {
 }
 
 function actualizarDisplayLogin() {
-    // 1. Siempre recorremos 4 posiciones fijas (0 a 3)
     for (let i = 0; i < 4; i++) {
         const el = document.getElementById('c' + i);
-        
         if (el) {
-            // 2. Extraemos el carácter del buffer si existe
             const caracter = loginBuffer[i] || "";
+            // Si no hay carácter, ponemos guion bajo
+            el.innerText = caracter || "_"; 
             
-            // 3. Si hay algo, lo ponemos. Si no, ponemos el guion bajo "_"
-            el.innerText = caracter || "_";
-            
-            // 4. Actualizamos el estilo visual
+            // Clase visual para resaltar los números escritos
             if (caracter) {
                 el.classList.add('filled');
             } else {
@@ -1286,15 +1285,28 @@ function ocultarMsgLogin() {
 async function loginVerificar() {
     const codigoRaw = loginBuffer.trim().toUpperCase();
 
-    // CAMBIO: Ahora validamos que tenga al menos 3, pero ya no ponemos tope máximo aquí
+    // 1. Validamos longitud mínima (acepta F01 y F100)
     if (codigoRaw.length < 3) {
-        mostrarMsgLogin('error', '⚠️ Código demasiado corto (ej: F03 o F105).');
+        mostrarMsgLogin('error', '⚠️ Código incompleto.');
         sacudirDisplay();
         return;
     }
 
-    const CLAVE_MAESTRA = 'F00';
+    // 2. SEGURIDAD: Verificar si el dispositivo ya está vinculado a un código
+    // Buscamos si ya existe un código guardado de una sesión exitosa previa
+    const codigoVinculado = localStorage.getItem('fitup_autenticado');
 
+    // Si ya existe un código guardado y no es la CLAVE_MAESTRA,
+    // y el usuario intenta meter uno DIFERENTE, lo bloqueamos.
+    if (codigoVinculado && codigoVinculado !== 'F00' && codigoRaw !== codigoVinculado) {
+        mostrarMsgLogin('error', '❌ Este dispositivo ya está vinculado al código ' + codigoVinculado);
+        sacudirDisplay();
+        if (navigator.vibrate) navigator.vibrate(500);
+        return;
+    }
+
+    // 3. CLAVE MAESTRA — Solo para pruebas
+    const CLAVE_MAESTRA = 'F00';
     if (codigoRaw === CLAVE_MAESTRA) {
         mostrarMsgLogin('info', '🔑 Acceso maestro activado...');
         if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
@@ -1321,11 +1333,21 @@ async function loginVerificar() {
     ocultarMsgLogin();
 
     try {
+        // Enviar el código (de 3 o 4 dígitos) al servidor
         const resultado = await verificarCodigoEnSheets(codigoRaw);
 
         if (resultado.valido) {
+            // Verificamos si el servidor nos dice que el código ya fue usado por otro ID
+            if (resultado.en_uso) {
+                mostrarMsgLogin('error', '❌ Este código ya pertenece a otro usuario.');
+                sacudirDisplay();
+                return;
+            }
+
             mostrarMsgLogin('success', '✅ ¡Código verificado! Iniciando FitUP...');
             if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+            
+            // GUARDAMOS EL CÓDIGO: Esto vincula el dispositivo para siempre
             localStorage.setItem('fitup_autenticado', codigoRaw);
 
             setTimeout(() => {
@@ -1341,7 +1363,7 @@ async function loginVerificar() {
             }, 1500);
 
         } else if (resultado.razon === 'inactivo') {
-            mostrarMsgLogin('error', '❌ Código no activado. Contacta a tu distribuidor FitUP.');
+            mostrarMsgLogin('error', '❌ Código no activado. Contacta a tu distribuidor.');
             sacudirDisplay();
 
         } else if (resultado.razon === 'no_encontrado') {
@@ -1356,7 +1378,7 @@ async function loginVerificar() {
 
     } catch (err) {
         console.error('Error FitUP:', err);
-        mostrarMsgLogin('error', '⚠️ Sin conexión al servidor. Verifica tu internet.');
+        mostrarMsgLogin('error', '⚠️ Sin conexión al servidor.');
         sacudirDisplay();
     } finally {
         if (loader) loader.style.display = 'none';
@@ -1367,13 +1389,25 @@ async function loginVerificar() {
 async function verificarCodigoEnSheets(codigoIngresado) {
     const codigoLimpio = codigoIngresado.toString().trim().toUpperCase();
 
-    const url = `${FITUP_API_URL}?accion=verificar&codigo=${encodeURIComponent(codigoLimpio)}`;
+    // 1. Obtenemos o generamos un ID único para este dispositivo/navegador
+    // Esto es lo que permite "enlazar" el código a este equipo específicamente
+    let deviceId = localStorage.getItem('fitup_device_id');
+    if (!deviceId) {
+        deviceId = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        localStorage.setItem('fitup_device_id', deviceId);
+    }
 
+    // 2. Construimos la URL enviando AMBOS parámetros
+    const url = `${FITUP_API_URL}?accion=verificar&codigo=${encodeURIComponent(codigoLimpio)}&deviceId=${encodeURIComponent(deviceId)}`;
+
+    // 3. Petición al servidor
     const response = await fetch(url, { cache: 'no-store' });
 
     if (!response.ok) throw new Error('Error de conexión con el servidor FitUP.');
 
     const data = await response.json();
+    
+    // El servidor nos dirá si es válido y si el enlace es correcto
     return data;
 }
 
