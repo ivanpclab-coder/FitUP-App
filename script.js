@@ -1233,15 +1233,12 @@ function loginKey(digit) {
 }
 
 function loginClear() {
-    loginBuffer = loginBuffer.slice(0, -1);
-    
-    // Si borramos el 4to dígito, eliminamos el span c3 para que la interfaz vuelva a verse de 3
-    const extra = document.getElementById('c3');
-    if (loginBuffer.length < 4 && extra) {
-        extra.remove();
+    if (loginBuffer.length > 0) {
+        // Quitamos el último carácter del buffer
+        loginBuffer = loginBuffer.slice(0, -1);
+        // Refrescamos la pantalla
+        actualizarDisplayLogin();
     }
-    
-    actualizarDisplayLogin();
 }
 
 function loginSyncManual(valor) {
@@ -1252,27 +1249,24 @@ function loginSyncManual(valor) {
 }
 
 function actualizarDisplayLogin() {
-    const contenedor = document.querySelector('.login-code-display'); // Asegúrate que este sea el nombre de tu contenedor
-    
-    // 1. Limpiamos los 3 que ya existen por defecto en el HTML
-    for (let i = 0; i < 3; i++) {
+    // 1. Siempre recorremos 4 posiciones fijas (0 a 3)
+    for (let i = 0; i < 4; i++) {
         const el = document.getElementById('c' + i);
-        if (el) el.innerText = "_";
-    }
-
-    // 2. Llenamos con lo que hay en el buffer
-    for (let i = 0; i < loginBuffer.length; i++) {
-        let el = document.getElementById('c' + i);
         
-        // Si es el 4to dígito y el elemento 'c3' NO existe, lo creamos
-        if (!el && i === 3) {
-            el = document.createElement('span');
-            el.id = 'c3';
-            el.className = 'code-char'; // Usa la misma clase de tus otros spans
-            contenedor.appendChild(el);
+        if (el) {
+            // 2. Extraemos el carácter del buffer si existe
+            const caracter = loginBuffer[i] || "";
+            
+            // 3. Si hay algo, lo ponemos. Si no, ponemos el guion bajo "_"
+            el.innerText = caracter || "_";
+            
+            // 4. Actualizamos el estilo visual
+            if (caracter) {
+                el.classList.add('filled');
+            } else {
+                el.classList.remove('filled');
+            }
         }
-        
-        if (el) el.innerText = loginBuffer[i];
     }
 }
 
